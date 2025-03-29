@@ -43,3 +43,59 @@ code {
   -o-user-select: none;
   user-select: none;
 }
+
+/* Enhanced resize handle styles */
+.react-resizable-handle {
+  position: absolute;
+  width: 20px !important;
+  height: 20px !important;
+  bottom: 0;
+  right: 0;
+  cursor: se-resize;
+  border-radius: 0 0 4px 0;
+  transition: all 0.2s ease;
+}
+
+.react-resizable-handle::before {
+  content: '';
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 12px;
+  height: 12px;
+  border-right: 2px solid;
+  border-bottom: 2px solid;
+  opacity: 0.5;
+  transition: all 0.2s ease;
+}
+
+.react-resizable-handle:hover::before {
+  opacity: 1;
+  width: 14px;
+  height: 14px;
+}
+
+/* Theme-specific resize handle styles */
+[data-theme='broadridge'] .react-resizable-handle::before {
+  border-color: #003865;
+}
+
+[data-theme='dark'] .react-resizable-handle::before {
+  border-color: #90caf9;
+}
+
+[data-theme='ocean'] .react-resizable-handle::before {
+  border-color: #00acc1;
+}
+
+[data-theme='forest'] .react-resizable-handle::before {
+  border-color: #2e7d32;
+}
+
+[data-theme='nyc'] .react-resizable-handle::before {
+  border-color: #ffc107;
+}
+
+[data-theme='hibeanie'] .react-resizable-handle::before {
+  border-color: #FF6B6B;
+}

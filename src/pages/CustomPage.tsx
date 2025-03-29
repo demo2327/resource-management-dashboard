@@ -10,28 +10,41 @@ import {
   List,
   ListItemButton,
   ListItemText,
-  IconButton,
   TextField,
+  FormControlLabel,
+  Switch,
 } from '@mui/material';
-import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Add as AddIcon } from '@mui/icons-material';
 import GridLayout from 'react-grid-layout';
 import ResizableWidget from '../components/Widget/ResizableWidget';
 import { useCustomPages } from '../context/CustomPagesContext';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+import PieChartWidget from '../components/Widget/PieChartWidget';
+
+// Define widget type as a union type
+export type WidgetType = 'text' | 'inventory' | 'pie-chart';
 
 const WIDGET_TYPES = [
-  { type: 'default', label: 'Default Widget' },
-  { type: 'inventory', label: 'Inventory Widget' },
-  // Add more widget types here
-];
+  { type: 'text' as WidgetType, label: 'Text Widget' },
+  { type: 'inventory' as WidgetType, label: 'Inventory Widget' },
+  { type: 'pie-chart' as WidgetType, label: 'Pie Chart' }
+] as const;
+
+export interface Widget {
+  id: string;
+  title: string;
+  type: WidgetType;
+  isHeart?: boolean;
+}
 
 const CustomPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { pages, addWidgetToPage, removeWidgetFromPage, updatePageLayout } = useCustomPages();
+  const { pages, addWidgetToPage, removeWidgetFromPage, updatePageLayout, copyWidget } = useCustomPages();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newWidgetTitle, setNewWidgetTitle] = useState('');
-  const [selectedWidgetType, setSelectedWidgetType] = useState(WIDGET_TYPES[0].type);
+  const [selectedWidgetType, setSelectedWidgetType] = useState<WidgetType>('text');
+  const [isHeartShape, setIsHeartShape] = useState(false);
 
   const page = pages.find(p => p.id === id);
 
@@ -41,15 +54,29 @@ const CustomPage: React.FC = () => {
 
   const handleAddWidget = () => {
     if (newWidgetTitle.trim()) {
-      addWidgetToPage(page.id, selectedWidgetType, newWidgetTitle);
+      addWidgetToPage(page.id, selectedWidgetType, newWidgetTitle, isHeartShape);
       setIsDialogOpen(false);
       setNewWidgetTitle('');
-      setSelectedWidgetType(WIDGET_TYPES[0].type);
+      setSelectedWidgetType('text');
+      setIsHeartShape(false);
     }
   };
 
   const handleLayoutChange = (layout: any) => {
     updatePageLayout(page.id, layout);
+  };
+
+  const renderWidget = (widget: Widget) => {
+    switch (widget.type) {
+      case 'text':
+        return <div>Text Widget Content</div>;
+      case 'inventory':
+        return <div>Inventory Widget Content</div>;
+      case 'pie-chart':
+        return <PieChartWidget />;
+      default:
+        return null;
+    }
   };
 
   return (
@@ -77,26 +104,25 @@ const CustomPage: React.FC = () => {
       >
         {page.widgets.map((widget) => (
           <div key={widget.id}>
-            <ResizableWidget title={widget.title}>
-              <Box sx={{ position: 'relative', height: '100%' }}>
-                <IconButton
-                  sx={{
-                    position: 'absolute',
-                    top: 8,
-                    right: 8,
-                  }}
-                  onClick={() => removeWidgetFromPage(page.id, widget.id)}
-                >
-                  <DeleteIcon />
-                </IconButton>
-                <div>{`${widget.type} Widget Content`}</div>
-              </Box>
+            <ResizableWidget 
+              title={widget.title}
+              showControls={true}
+              onCopy={() => copyWidget(page.id, widget.id)}
+              onDelete={() => removeWidgetFromPage(page.id, widget.id)}
+              isHeart={widget.isHeart}
+            >
+              {renderWidget(widget)}
             </ResizableWidget>
           </div>
         ))}
       </GridLayout>
 
-      <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+      <Dialog 
+        open={isDialogOpen} 
+        onClose={() => setIsDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Add New Widget</DialogTitle>
         <DialogContent>
           <TextField
@@ -106,8 +132,9 @@ const CustomPage: React.FC = () => {
             fullWidth
             value={newWidgetTitle}
             onChange={(e) => setNewWidgetTitle(e.target.value)}
+            sx={{ mb: 2 }}
           />
-          <List>
+          <List sx={{ border: 1, borderColor: 'divider', borderRadius: 1 }}>
             {WIDGET_TYPES.map((type) => (
               <ListItemButton
                 key={type.type}
@@ -118,10 +145,21 @@ const CustomPage: React.FC = () => {
               </ListItemButton>
             ))}
           </List>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={isHeartShape}
+                onChange={(e) => setIsHeartShape(e.target.checked)}
+                color="primary"
+              />
+            }
+            label="Heart Shape"
+            sx={{ mt: 2 }}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-          <Button onClick={handleAddWidget} variant="contained">
+          <Button onClick={handleAddWidget} variant="contained" color="primary">
             Add
           </Button>
         </DialogActions>
