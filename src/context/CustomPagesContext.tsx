@@ -5,6 +5,7 @@ interface Widget {
   id: string;
   title: string;
   type: string;
+  isHeart?: boolean;
 }
 
 export interface CustomPage {
@@ -18,9 +19,11 @@ interface CustomPagesContextType {
   pages: CustomPage[];
   addPage: (title: string) => void;
   removePage: (id: string) => void;
-  addWidgetToPage: (pageId: string, widgetType: string, title: string) => void;
+  addWidgetToPage: (pageId: string, type: string, title: string, isHeart?: boolean) => void;
   removeWidgetFromPage: (pageId: string, widgetId: string) => void;
   updatePageLayout: (pageId: string, layout: Layout[]) => void;
+  copyWidget: (pageId: string, widgetId: string) => void;
+  resetAllPages: () => void;
 }
 
 const CustomPagesContext = createContext<CustomPagesContextType>({
@@ -30,6 +33,8 @@ const CustomPagesContext = createContext<CustomPagesContextType>({
   addWidgetToPage: () => {},
   removeWidgetFromPage: () => {},
   updatePageLayout: () => {},
+  copyWidget: () => {},
+  resetAllPages: () => {},
 });
 
 export const useCustomPages = () => useContext(CustomPagesContext);
@@ -58,25 +63,27 @@ export const CustomPagesProvider: React.FC<{ children: React.ReactNode }> = ({ c
     setPages(pages.filter(page => page.id !== id));
   };
 
-  const addWidgetToPage = (pageId: string, widgetType: string, title: string) => {
+  const addWidgetToPage = (pageId: string, type: string, title: string, isHeart: boolean = false) => {
     setPages(pages.map(page => {
       if (page.id === pageId) {
+        const widgetId = `widget-${Date.now()}`;
         const newWidget: Widget = {
-          id: `widget-${Date.now()}`,
+          id: widgetId,
           title,
-          type: widgetType,
+          type,
+          isHeart
         };
         const newLayout: Layout = {
-          i: newWidget.id,
-          x: (page.layout.length * 6) % 12,
-          y: Math.floor(page.layout.length / 2) * 4,
+          i: widgetId,
+          x: (page.layout.length * 2) % 12,
+          y: Infinity,
           w: 6,
-          h: 4,
+          h: 4
         };
         return {
           ...page,
           widgets: [...page.widgets, newWidget],
-          layout: [...page.layout, newLayout],
+          layout: [...page.layout, newLayout]
         };
       }
       return page;
@@ -88,8 +95,8 @@ export const CustomPagesProvider: React.FC<{ children: React.ReactNode }> = ({ c
       if (page.id === pageId) {
         return {
           ...page,
-          widgets: page.widgets.filter(w => w.id !== widgetId),
-          layout: page.layout.filter(l => l.i !== widgetId),
+          widgets: page.widgets.filter(widget => widget.id !== widgetId),
+          layout: page.layout.filter(item => item.i !== widgetId)
         };
       }
       return page;
@@ -101,11 +108,65 @@ export const CustomPagesProvider: React.FC<{ children: React.ReactNode }> = ({ c
       if (page.id === pageId) {
         return {
           ...page,
-          layout,
+          layout
         };
       }
       return page;
     }));
+  };
+
+  const copyWidget = (pageId: string, widgetId: string) => {
+    setPages(pages.map(page => {
+      if (page.id === pageId) {
+        const originalWidget = page.widgets.find(w => w.id === widgetId);
+        if (originalWidget) {
+          const newWidgetId = `widget-${Date.now()}`;
+          const newWidget: Widget = {
+            ...originalWidget,
+            id: newWidgetId
+          };
+          const newLayout: Layout = {
+            i: newWidgetId,
+            x: (page.layout.length * 2) % 12,
+            y: Infinity,
+            w: 6,
+            h: 4
+          };
+          return {
+            ...page,
+            widgets: [...page.widgets, newWidget],
+            layout: [...page.layout, newLayout]
+          };
+        }
+      }
+      return page;
+    }));
+  };
+
+  const resetAllPages = () => {
+    // Clear all pages and layouts
+    setPages([]);
+    
+    // Clear all stored data
+    localStorage.removeItem('customPages');
+    localStorage.removeItem('gridLayouts');
+    localStorage.removeItem('widgetPositions');
+    localStorage.removeItem('lastWidgetPositions');
+    
+    // Clear any other related local storage items that might affect layout
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && (
+        key.startsWith('rgl-') || // react-grid-layout keys
+        key.includes('layout') || // any layout related keys
+        key.includes('widget') || // any widget related keys
+        key.includes('position') // any position related keys
+      )) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach(key => localStorage.removeItem(key));
   };
 
   return (
@@ -117,6 +178,8 @@ export const CustomPagesProvider: React.FC<{ children: React.ReactNode }> = ({ c
         addWidgetToPage,
         removeWidgetFromPage,
         updatePageLayout,
+        copyWidget,
+        resetAllPages
       }}
     >
       {children}
