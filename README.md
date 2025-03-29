@@ -35,8 +35,8 @@ A React-based web application for managing and monitoring various resources, wit
 
 1. Clone the repository
 ```bash
-git clone [repository-url]
-cd [repository-name]
+git clone git@github.com:demo2327/resource-management-dashboard.git
+cd resource-management-dashboard
 ```
 
 2. Install dependencies
@@ -66,6 +66,25 @@ This builds the app for production to the `build` folder.
   - `/pages` - Page components
   - `/hooks` - Custom React hooks
   - `/aws` - AWS resource-specific components
+
+## Development Setup
+
+### SSH Configuration
+This repository is configured to use SSH for Git operations. To set up SSH access:
+
+1. Generate an SSH key pair if you haven't already:
+```bash
+ssh-keygen -t ed25519 -C "your.email@example.com"
+```
+
+2. Add your SSH public key to GitHub:
+   - Copy the contents of `~/.ssh/id_ed25519.pub`
+   - Add it to your GitHub account at https://github.com/settings/ssh/new
+
+3. Clone using SSH URL:
+```bash
+git clone git@github.com:demo2327/resource-management-dashboard.git
+```
 
 ## Contributing
 
