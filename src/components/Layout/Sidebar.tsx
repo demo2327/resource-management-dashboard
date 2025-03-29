@@ -17,6 +17,7 @@ import {
   TextField,
   Typography,
   IconButton,
+  Tooltip,
 } from '@mui/material';
 import {
   Home,
@@ -33,19 +34,22 @@ import {
   Dashboard,
   Add as AddIcon,
   Delete as DeleteIcon,
+  Refresh as RefreshIcon,
 } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useCustomPages } from '../../context/CustomPagesContext';
 
 const drawerWidth = 240;
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [awsOpen, setAwsOpen] = useState(false);
   const [customPagesOpen, setCustomPagesOpen] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newPageTitle, setNewPageTitle] = useState('');
-  const { pages, addPage, removePage } = useCustomPages();
+  const { pages, addPage, removePage, resetAllPages } = useCustomPages();
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const handleAwsClick = () => {
     setAwsOpen(!awsOpen);
@@ -61,6 +65,12 @@ const Sidebar: React.FC = () => {
       setIsDialogOpen(false);
       setNewPageTitle('');
     }
+  };
+
+  const handleReset = () => {
+    resetAllPages();
+    setShowResetConfirm(false);
+    navigate('/');
   };
 
   return (
@@ -243,6 +253,20 @@ const Sidebar: React.FC = () => {
         </List>
       </Box>
 
+      <Box sx={{ position: 'fixed', bottom: 0, width: drawerWidth, p: 2, borderTop: 1, borderColor: 'divider' }}>
+        <Tooltip title="Reset all custom pages and modifications">
+          <Button
+            fullWidth
+            variant="outlined"
+            color="error"
+            startIcon={<RefreshIcon />}
+            onClick={() => setShowResetConfirm(true)}
+          >
+            Reset All
+          </Button>
+        </Tooltip>
+      </Box>
+
       <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
         <DialogTitle>Create New Page</DialogTitle>
         <DialogContent>
@@ -259,6 +283,19 @@ const Sidebar: React.FC = () => {
           <Button onClick={() => setIsDialogOpen(false)}>Cancel</Button>
           <Button onClick={handleAddPage} variant="contained">
             Create
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={showResetConfirm} onClose={() => setShowResetConfirm(false)}>
+        <DialogTitle>Confirm Reset</DialogTitle>
+        <DialogContent>
+          Are you sure you want to reset all custom pages? This action cannot be undone.
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowResetConfirm(false)}>Cancel</Button>
+          <Button onClick={handleReset} color="error" variant="contained">
+            Reset
           </Button>
         </DialogActions>
       </Dialog>

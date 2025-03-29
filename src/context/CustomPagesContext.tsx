@@ -17,9 +17,19 @@ interface CustomPagesContextType {
   removeWidgetFromPage: (pageId: string, widgetId: string) => void;
   updatePageLayout: (pageId: string, layout: Layout[]) => void;
   copyWidget: (pageId: string, widgetId: string) => void;
+  resetAllPages: () => void;
 }
 
-const CustomPagesContext = createContext<CustomPagesContextType | undefined>(undefined);
+const CustomPagesContext = createContext<CustomPagesContextType>({
+  pages: [],
+  addPage: () => {},
+  removePage: () => {},
+  addWidgetToPage: () => {},
+  removeWidgetFromPage: () => {},
+  updatePageLayout: () => {},
+  copyWidget: () => {},
+  resetAllPages: () => {},
+});
 
 export const useCustomPages = () => {
   const context = useContext(CustomPagesContext);
@@ -133,16 +143,45 @@ export const CustomPagesProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }));
   };
 
+  const resetAllPages = () => {
+    // Clear all pages and layouts
+    setPages([]);
+    
+    // Clear all stored data
+    localStorage.removeItem('customPages');
+    localStorage.removeItem('gridLayouts');
+    localStorage.removeItem('widgetPositions');
+    localStorage.removeItem('lastWidgetPositions');
+    
+    // Clear any other related local storage items that might affect layout
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && (
+        key.startsWith('rgl-') || // react-grid-layout keys
+        key.includes('layout') || // any layout related keys
+        key.includes('widget') || // any widget related keys
+        key.includes('position') // any position related keys
+      )) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach(key => localStorage.removeItem(key));
+  };
+
   return (
-    <CustomPagesContext.Provider value={{
-      pages,
-      addPage,
-      removePage,
-      addWidgetToPage,
-      removeWidgetFromPage,
-      updatePageLayout,
-      copyWidget
-    }}>
+    <CustomPagesContext.Provider
+      value={{
+        pages,
+        addPage,
+        removePage,
+        addWidgetToPage,
+        removeWidgetFromPage,
+        updatePageLayout,
+        copyWidget,
+        resetAllPages
+      }}
+    >
       {children}
     </CustomPagesContext.Provider>
   );
