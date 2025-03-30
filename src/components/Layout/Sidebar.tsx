@@ -277,6 +277,12 @@ const Sidebar: React.FC = () => {
             fullWidth
             value={newPageTitle}
             onChange={(e) => setNewPageTitle(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && newPageTitle.trim()) {
+                e.preventDefault();
+                handleAddPage();
+              }
+            }}
           />
         </DialogContent>
         <DialogActions>
