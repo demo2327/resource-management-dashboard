@@ -345,8 +345,8 @@ const themes = {
         dark: '#424242',
       },
       background: {
-        default: '#0d1b3e', // Deep Night Sky
-        paper: '#1a2a57', // Illuminated Building
+        default: '#485461', // Wet Concrete
+        paper: '#5d6d7e', // Lighter Wet Concrete
       },
       error: {
         main: '#e41d1d', // Broadway Red
