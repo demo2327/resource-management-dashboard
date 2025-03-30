@@ -119,6 +119,7 @@ const ResizableWidget: React.FC<ResizableWidgetProps> = ({
             <IconButton
               size="small"
               onClick={handleCopy}
+              onMouseDown={(e) => e.stopPropagation()}
               sx={{ 
                 mr: 0.5,
                 '&:hover': {
@@ -131,6 +132,7 @@ const ResizableWidget: React.FC<ResizableWidgetProps> = ({
             <IconButton
               size="small"
               onClick={handleDelete}
+              onMouseDown={(e) => e.stopPropagation()}
               sx={{
                 '&:hover': {
                   backgroundColor: 'rgba(0, 0, 0, 0.08)'

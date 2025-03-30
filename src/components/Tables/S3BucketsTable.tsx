@@ -135,7 +135,10 @@ const columns: GridColDef[] = [
 
 const S3BucketsTable = () => {
   return (
-    <Box sx={{ width: '100%', height: '100%' }}>
+    <Box 
+      sx={{ width: '100%', height: '100%' }}
+      onMouseDown={(e) => e.stopPropagation()}
+    >
       <DataGrid
         rows={s3InventoryData.data}
         columns={columns}
