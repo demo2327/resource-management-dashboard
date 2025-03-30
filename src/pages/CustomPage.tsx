@@ -21,14 +21,16 @@ import { useCustomPages } from '../context/CustomPagesContext';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import PieChartWidget from '../components/Widget/PieChartWidget';
+import S3BucketsTable from '../components/Tables/S3BucketsTable';
 
 // Define widget type as a union type
-export type WidgetType = 'text' | 'inventory' | 'pie-chart';
+export type WidgetType = 'text' | 'inventory' | 'pie-chart' | 's3-buckets';
 
 const WIDGET_TYPES = [
   { type: 'text' as WidgetType, label: 'Text Widget' },
   { type: 'inventory' as WidgetType, label: 'Inventory Widget' },
-  { type: 'pie-chart' as WidgetType, label: 'Pie Chart' }
+  { type: 'pie-chart' as WidgetType, label: 'Pie Chart' },
+  { type: 's3-buckets' as WidgetType, label: 'S3 Buckets Table' }
 ] as const;
 
 export interface Widget {
@@ -74,6 +76,8 @@ const CustomPage: React.FC = () => {
         return <div>Inventory Widget Content</div>;
       case 'pie-chart':
         return <PieChartWidget />;
+      case 's3-buckets':
+        return <Box sx={{ width: '100%', height: '100%', p: 2 }}><S3BucketsTable /></Box>;
       default:
         return null;
     }
