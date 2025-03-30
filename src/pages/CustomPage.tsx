@@ -95,9 +95,9 @@ const CustomPage: React.FC = () => {
       <GridLayout
         className="layout"
         layout={page.layout}
-        cols={12}
+        cols={20}
         rowHeight={100}
-        width={1200}
+        width={2000}
         isDraggable={true}
         isResizable={true}
         onLayoutChange={handleLayoutChange}

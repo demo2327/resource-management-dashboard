@@ -8,8 +8,8 @@ import 'react-resizable/css/styles.css';
 
 const EntryPage: React.FC = () => {
   const defaultLayout: Layout[] = [
-    { i: 'widget1', x: 0, y: 0, w: 6, h: 4 },
-    { i: 'widget2', x: 6, y: 0, w: 6, h: 4 },
+    { i: 'widget1', x: 0, y: 0, w: 10, h: 4 },
+    { i: 'widget2', x: 10, y: 0, w: 10, h: 4 },
   ];
 
   const { layout, onLayoutChange } = usePersistedLayout('entry-page', defaultLayout);
@@ -19,9 +19,9 @@ const EntryPage: React.FC = () => {
       <GridLayout
         className="layout"
         layout={layout}
-        cols={12}
+        cols={20}
         rowHeight={100}
-        width={1200}
+        width={2000}
         isDraggable={true}
         isResizable={true}
         onLayoutChange={onLayoutChange}
