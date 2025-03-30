@@ -23,14 +23,14 @@ const Header: React.FC = () => {
     setAnchorEl(null);
   };
 
-  const handleThemeChange = (theme: 'broadridge' | 'dark' | 'ocean' | 'forest' | 'nyc') => {
+  const handleThemeChange = (theme: 'broadridge' | 'dark' | 'ocean' | 'forest' | 'nyc' | 'hibeanie' | 'india') => {
     setTheme(theme);
     handleClose();
   };
 
   return (
     <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-      <Toolbar sx={{ justifyContent: 'space-between' }}>
+      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="h6" noWrap component="div">
           Resource Management Dashboard
         </Typography>
@@ -90,6 +90,18 @@ const Header: React.FC = () => {
               selected={currentTheme === 'nyc'}
             >
               New York City
+            </MenuItem>
+            <MenuItem 
+              onClick={() => handleThemeChange('hibeanie')}
+              selected={currentTheme === 'hibeanie'}
+            >
+              Hi Beanie
+            </MenuItem>
+            <MenuItem 
+              onClick={() => handleThemeChange('india')}
+              selected={currentTheme === 'india'}
+            >
+              India
             </MenuItem>
           </Menu>
         </Box>

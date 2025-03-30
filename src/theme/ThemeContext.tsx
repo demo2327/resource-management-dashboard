@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import { ThemeProvider as MuiThemeProvider, createTheme, ThemeOptions } from '@mui/material';
 
-export type ThemeMode = 'broadridge' | 'dark' | 'ocean' | 'forest' | 'nyc' | 'hibeanie';
+export type ThemeMode = 'broadridge' | 'dark' | 'ocean' | 'forest' | 'nyc' | 'hibeanie' | 'india';
 
 const themes = {
   broadridge: createTheme({
@@ -605,6 +605,146 @@ const themes = {
         styleOverrides: {
           root: {
             color: '#FF9F1C',
+          },
+        },
+      },
+    },
+  }),
+  india: createTheme({
+    palette: {
+      mode: 'light',
+      primary: {
+        main: '#FF9933', // Deep Saffron (from Indian flag)
+        light: '#FFB366',
+        dark: '#CC7A29',
+        contrastText: '#FFFFFF',
+      },
+      secondary: {
+        main: '#138808', // India Green (from Indian flag)
+        light: '#1AB80E',
+        dark: '#0E6606',
+        contrastText: '#FFFFFF',
+      },
+      background: {
+        default: '#FFF9E6', // Light Cream (inspired by traditional Indian textiles)
+        paper: '#FFFFFF',
+      },
+      error: {
+        main: '#D16E6E', // Sindoor Red
+        light: '#DB8A8A',
+        dark: '#A75757',
+      },
+      warning: {
+        main: '#B4832E', // Turmeric Gold
+        light: '#C69B4D',
+        dark: '#8F6925',
+      },
+      info: {
+        main: '#0066B3', // Royal Blue (inspired by Blue Pottery)
+        light: '#1A8AD6',
+        dark: '#004D86',
+      },
+      success: {
+        main: '#138808', // India Green
+        light: '#1AB80E',
+        dark: '#0E6606',
+      },
+      text: {
+        primary: '#2C1810', // Deep Brown (inspired by traditional wood carvings)
+        secondary: 'rgba(44, 24, 16, 0.7)',
+      },
+      divider: 'rgba(180, 131, 46, 0.12)',
+    },
+    typography: {
+      fontFamily: "'Poppins', 'Arial', sans-serif",
+      h1: {
+        fontFamily: "'Poppins', 'Arial', sans-serif",
+        fontWeight: 700,
+        letterSpacing: '0.02em',
+      },
+      h2: {
+        fontFamily: "'Poppins', 'Arial', sans-serif",
+        fontWeight: 600,
+        letterSpacing: '0.01em',
+      },
+      h3: {
+        fontFamily: "'Poppins', 'Arial', sans-serif",
+        fontWeight: 600,
+      },
+      h4: {
+        fontFamily: "'Poppins', 'Arial', sans-serif",
+        fontWeight: 500,
+      },
+      button: {
+        fontFamily: "'Poppins', 'Arial', sans-serif",
+        fontWeight: 600,
+        letterSpacing: '0.03em',
+      },
+      subtitle1: {
+        fontFamily: "'Poppins', 'Arial', sans-serif",
+        fontWeight: 500,
+      },
+      subtitle2: {
+        fontFamily: "'Poppins', 'Arial', sans-serif",
+        fontWeight: 500,
+      },
+    },
+    components: {
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            backgroundImage: 'linear-gradient(45deg, #FF9933 0%, #138808 100%)', // Gradient using Indian flag colors
+            boxShadow: '0 4px 20px rgba(255, 153, 51, 0.2)',
+          },
+        },
+      },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            backgroundImage: 'linear-gradient(135deg, #FFFFFF 0%, #FFF9E6 100%)',
+            '&.MuiCard-root': {
+              boxShadow: '0 8px 32px rgba(180, 131, 46, 0.1)',
+              borderRadius: 16,
+              border: '1px solid rgba(180, 131, 46, 0.08)', // Subtle border inspired by traditional patterns
+            },
+          },
+        },
+      },
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            borderRadius: 8,
+            textTransform: 'none',
+            fontWeight: 600,
+            '&.MuiButton-contained': {
+              backgroundImage: 'linear-gradient(45deg, #FF9933 30%, #FFB366 90%)',
+              boxShadow: '0 4px 12px rgba(255, 153, 51, 0.3)',
+            },
+          },
+        },
+      },
+      MuiDrawer: {
+        styleOverrides: {
+          paper: {
+            backgroundImage: 'linear-gradient(180deg, #FFFFFF 0%, #FFF9E6 100%)',
+            boxShadow: '4px 0 20px rgba(180, 131, 46, 0.1)',
+            borderRight: '1px solid rgba(180, 131, 46, 0.08)',
+          },
+        },
+      },
+      MuiListItemButton: {
+        styleOverrides: {
+          root: {
+            '&.Mui-selected': {
+              backgroundColor: 'rgba(255, 153, 51, 0.15)',
+              '&:hover': {
+                backgroundColor: 'rgba(255, 153, 51, 0.25)',
+              },
+            },
+            '&:hover': {
+              backgroundColor: 'rgba(255, 153, 51, 0.08)',
+              transition: 'background-color 0.3s ease',
+            },
           },
         },
       },
