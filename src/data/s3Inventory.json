@@ -1,0 +1,644 @@
+{
+  "data": [
+    {
+        "type": "Buckets",
+        "id": "2bfbad29-b5f6-4789-9987-654321098765",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 0,
+                    "Expiration": 30,
+                    "LifecycleRule": "rule-1",
+                    "NoncurrentVersionExpiration": 0,
+                    "NoncurrentVersionTransitionsDays": 0,
+                    "NoncurrentVersionTransitionsStorage": "",
+                    "Status": "Disabled",
+                    "TransitionDays": 0,
+                    "TransitionStorage": ""
+                }
+            ],
+            "Name": "bucket-1",
+            "Region": "us-east-1",
+            "SizeBytes": 0,
+            "WeeklyGrow": 0
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "987654321098",
+                    "type": "Accounts",
+                    "name": "Development"
+                }
+            }
+        }
+    },
+    {
+        "type": "Buckets",
+        "id": "3cfced39-c6f7-5890-0098-765432109876",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 7,
+                    "Expiration": 90,
+                    "LifecycleRule": "archive-rule",
+                    "NoncurrentVersionExpiration": 30,
+                    "NoncurrentVersionTransitionsDays": 60,
+                    "NoncurrentVersionTransitionsStorage": "GLACIER",
+                    "Status": "Enabled",
+                    "TransitionDays": 30,
+                    "TransitionStorage": "STANDARD_IA"
+                }
+            ],
+            "Name": "prod-data-archive",
+            "Region": "us-west-2",
+            "SizeBytes": 1073741824,
+            "WeeklyGrow": 52428800
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "123456789012",
+                    "type": "Accounts",
+                    "name": "Production"
+                }
+            }
+        }
+    },
+    {
+        "type": "Buckets",
+        "id": "4dfdef40-d7f8-6901-1109-876543210987",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 3,
+                    "Expiration": 0,
+                    "LifecycleRule": "backup-rule",
+                    "NoncurrentVersionExpiration": 90,
+                    "NoncurrentVersionTransitionsDays": 30,
+                    "NoncurrentVersionTransitionsStorage": "STANDARD_IA",
+                    "Status": "Enabled",
+                    "TransitionDays": 45,
+                    "TransitionStorage": "INTELLIGENT_TIERING"
+                }
+            ],
+            "Name": "dev-backups",
+            "Region": "eu-west-1",
+            "SizeBytes": 536870912,
+            "WeeklyGrow": 26214400
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "987654321098",
+                    "type": "Accounts",
+                    "name": "Development"
+                }
+            }
+        }
+    },
+    {
+        "type": "Buckets",
+        "id": "5efeff41-e8f9-7012-2210-987654321098",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 1,
+                    "Expiration": 7,
+                    "LifecycleRule": "temp-rule",
+                    "NoncurrentVersionExpiration": 1,
+                    "NoncurrentVersionTransitionsDays": 0,
+                    "NoncurrentVersionTransitionsStorage": "",
+                    "Status": "Enabled",
+                    "TransitionDays": 0,
+                    "TransitionStorage": ""
+                }
+            ],
+            "Name": "temp-processing",
+            "Region": "ap-southeast-1",
+            "SizeBytes": 104857600,
+            "WeeklyGrow": 52428800
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "456789012345",
+                    "type": "Accounts",
+                    "name": "Staging"
+                }
+            }
+        }
+    },
+    {
+        "type": "Buckets",
+        "id": "6fgfgf42-f9g0-8123-3321-098765432109",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 0,
+                    "Expiration": 0,
+                    "LifecycleRule": "static-rule",
+                    "NoncurrentVersionExpiration": 0,
+                    "NoncurrentVersionTransitionsDays": 0,
+                    "NoncurrentVersionTransitionsStorage": "",
+                    "Status": "Disabled",
+                    "TransitionDays": 0,
+                    "TransitionStorage": ""
+                }
+            ],
+            "Name": "static-website-assets",
+            "Region": "us-east-1",
+            "SizeBytes": 268435456,
+            "WeeklyGrow": 1048576
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "234567890123",
+                    "type": "Accounts",
+                    "name": "Marketing"
+                }
+            }
+        }
+    },
+    {
+        "type": "Buckets",
+        "id": "7ghghg43-g0h1-9234-4432-109876543210",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 5,
+                    "Expiration": 180,
+                    "LifecycleRule": "compliance-rule",
+                    "NoncurrentVersionExpiration": 365,
+                    "NoncurrentVersionTransitionsDays": 90,
+                    "NoncurrentVersionTransitionsStorage": "GLACIER",
+                    "Status": "Enabled",
+                    "TransitionDays": 60,
+                    "TransitionStorage": "STANDARD_IA"
+                }
+            ],
+            "Name": "compliance-logs",
+            "Region": "eu-central-1",
+            "SizeBytes": 2147483648,
+            "WeeklyGrow": 104857600
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "345678901234",
+                    "type": "Accounts",
+                    "name": "Security"
+                }
+            }
+        }
+    },
+    {
+        "type": "Buckets",
+        "id": "8hihih44-h1i2-0345-5543-210987654321",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 2,
+                    "Expiration": 14,
+                    "LifecycleRule": "cache-rule",
+                    "NoncurrentVersionExpiration": 7,
+                    "NoncurrentVersionTransitionsDays": 0,
+                    "NoncurrentVersionTransitionsStorage": "",
+                    "Status": "Enabled",
+                    "TransitionDays": 0,
+                    "TransitionStorage": ""
+                }
+            ],
+            "Name": "app-cache",
+            "Region": "ap-northeast-1",
+            "SizeBytes": 53687091,
+            "WeeklyGrow": 10485760
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "456789012345",
+                    "type": "Accounts",
+                    "name": "Staging"
+                }
+            }
+        }
+    },
+    {
+        "type": "Buckets",
+        "id": "9ijiji45-i2j3-1456-6654-321098765432",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 0,
+                    "Expiration": 0,
+                    "LifecycleRule": "ml-rule",
+                    "NoncurrentVersionExpiration": 30,
+                    "NoncurrentVersionTransitionsDays": 7,
+                    "NoncurrentVersionTransitionsStorage": "STANDARD_IA",
+                    "Status": "Enabled",
+                    "TransitionDays": 0,
+                    "TransitionStorage": ""
+                }
+            ],
+            "Name": "ml-training-data",
+            "Region": "us-west-1",
+            "SizeBytes": 5368709120,
+            "WeeklyGrow": 268435456
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "567890123456",
+                    "type": "Accounts",
+                    "name": "Research"
+                }
+            }
+        }
+    },
+    {
+        "type": "Buckets",
+        "id": "0jkjkj46-j3k4-2567-7765-432109876543",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 1,
+                    "Expiration": 365,
+                    "LifecycleRule": "audit-rule",
+                    "NoncurrentVersionExpiration": 730,
+                    "NoncurrentVersionTransitionsDays": 180,
+                    "NoncurrentVersionTransitionsStorage": "GLACIER",
+                    "Status": "Enabled",
+                    "TransitionDays": 90,
+                    "TransitionStorage": "STANDARD_IA"
+                }
+            ],
+            "Name": "audit-logs",
+            "Region": "eu-west-2",
+            "SizeBytes": 1073741824,
+            "WeeklyGrow": 52428800
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "345678901234",
+                    "type": "Accounts",
+                    "name": "Security"
+                }
+            }
+        }
+    },
+    {
+        "type": "Buckets",
+        "id": "1klklk47-k4l5-3678-8876-543210987654",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 0,
+                    "Expiration": 0,
+                    "LifecycleRule": "media-rule",
+                    "NoncurrentVersionExpiration": 90,
+                    "NoncurrentVersionTransitionsDays": 30,
+                    "NoncurrentVersionTransitionsStorage": "STANDARD_IA",
+                    "Status": "Enabled",
+                    "TransitionDays": 60,
+                    "TransitionStorage": "INTELLIGENT_TIERING"
+                }
+            ],
+            "Name": "media-assets",
+            "Region": "ap-southeast-2",
+            "SizeBytes": 10737418240,
+            "WeeklyGrow": 536870912
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "234567890123",
+                    "type": "Accounts",
+                    "name": "Marketing"
+                }
+            }
+        }
+    },
+    {
+        "type": "Buckets",
+        "id": "2lmlml48-l5m6-4789-9987-654321098765",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 0,
+                    "Expiration": 0,
+                    "LifecycleRule": "backup-rule",
+                    "NoncurrentVersionExpiration": 0,
+                    "NoncurrentVersionTransitionsDays": 0,
+                    "NoncurrentVersionTransitionsStorage": "",
+                    "Status": "Disabled",
+                    "TransitionDays": 0,
+                    "TransitionStorage": ""
+                }
+            ],
+            "Name": "prod-backups",
+            "Region": "us-east-2",
+            "SizeBytes": 21474836480,
+            "WeeklyGrow": 1073741824
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "123456789012",
+                    "type": "Accounts",
+                    "name": "Production"
+                }
+            }
+        }
+    },
+    {
+        "type": "Buckets",
+        "id": "3mnmnm49-m6n7-5890-0098-765432109876",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 1,
+                    "Expiration": 30,
+                    "LifecycleRule": "logs-rule",
+                    "NoncurrentVersionExpiration": 60,
+                    "NoncurrentVersionTransitionsDays": 15,
+                    "NoncurrentVersionTransitionsStorage": "STANDARD_IA",
+                    "Status": "Enabled",
+                    "TransitionDays": 7,
+                    "TransitionStorage": "INTELLIGENT_TIERING"
+                }
+            ],
+            "Name": "application-logs",
+            "Region": "eu-south-1",
+            "SizeBytes": 4294967296,
+            "WeeklyGrow": 268435456
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "123456789012",
+                    "type": "Accounts",
+                    "name": "Production"
+                }
+            }
+        }
+    },
+    {
+        "type": "Buckets",
+        "id": "4nonon50-n7o8-6901-1109-876543210987",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 0,
+                    "Expiration": 0,
+                    "LifecycleRule": "config-rule",
+                    "NoncurrentVersionExpiration": 30,
+                    "NoncurrentVersionTransitionsDays": 0,
+                    "NoncurrentVersionTransitionsStorage": "",
+                    "Status": "Enabled",
+                    "TransitionDays": 0,
+                    "TransitionStorage": ""
+                }
+            ],
+            "Name": "app-config",
+            "Region": "ap-east-1",
+            "SizeBytes": 10485760,
+            "WeeklyGrow": 1048576
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "456789012345",
+                    "type": "Accounts",
+                    "name": "Staging"
+                }
+            }
+        }
+    },
+    {
+        "type": "Buckets",
+        "id": "5opopo51-o8p9-7012-2210-987654321098",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 3,
+                    "Expiration": 90,
+                    "LifecycleRule": "archive-rule",
+                    "NoncurrentVersionExpiration": 180,
+                    "NoncurrentVersionTransitionsDays": 60,
+                    "NoncurrentVersionTransitionsStorage": "GLACIER",
+                    "Status": "Enabled",
+                    "TransitionDays": 30,
+                    "TransitionStorage": "STANDARD_IA"
+                }
+            ],
+            "Name": "historical-data",
+            "Region": "sa-east-1",
+            "SizeBytes": 8589934592,
+            "WeeklyGrow": 104857600
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "567890123456",
+                    "type": "Accounts",
+                    "name": "Research"
+                }
+            }
+        }
+    },
+    {
+        "type": "Buckets",
+        "id": "6pqpqp52-p9q0-8123-3321-098765432109",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 0,
+                    "Expiration": 7,
+                    "LifecycleRule": "temp-rule",
+                    "NoncurrentVersionExpiration": 3,
+                    "NoncurrentVersionTransitionsDays": 0,
+                    "NoncurrentVersionTransitionsStorage": "",
+                    "Status": "Enabled",
+                    "TransitionDays": 0,
+                    "TransitionStorage": ""
+                }
+            ],
+            "Name": "temp-uploads",
+            "Region": "us-west-2",
+            "SizeBytes": 2147483648,
+            "WeeklyGrow": 536870912
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "456789012345",
+                    "type": "Accounts",
+                    "name": "Staging"
+                }
+            }
+        }
+    },
+    {
+        "type": "Buckets",
+        "id": "7qrqrq53-q0r1-9234-4432-109876543210",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 0,
+                    "Expiration": 0,
+                    "LifecycleRule": "cdn-rule",
+                    "NoncurrentVersionExpiration": 30,
+                    "NoncurrentVersionTransitionsDays": 7,
+                    "NoncurrentVersionTransitionsStorage": "STANDARD_IA",
+                    "Status": "Enabled",
+                    "TransitionDays": 0,
+                    "TransitionStorage": ""
+                }
+            ],
+            "Name": "cdn-assets",
+            "Region": "eu-central-1",
+            "SizeBytes": 4294967296,
+            "WeeklyGrow": 268435456
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "234567890123",
+                    "type": "Accounts",
+                    "name": "Marketing"
+                }
+            }
+        }
+    },
+    {
+        "type": "Buckets",
+        "id": "8rsrsr54-r1s2-0345-5543-210987654321",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 1,
+                    "Expiration": 365,
+                    "LifecycleRule": "backup-rule",
+                    "NoncurrentVersionExpiration": 730,
+                    "NoncurrentVersionTransitionsDays": 90,
+                    "NoncurrentVersionTransitionsStorage": "GLACIER",
+                    "Status": "Enabled",
+                    "TransitionDays": 30,
+                    "TransitionStorage": "STANDARD_IA"
+                }
+            ],
+            "Name": "database-backups",
+            "Region": "ap-south-1",
+            "SizeBytes": 16106127360,
+            "WeeklyGrow": 1073741824
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "123456789012",
+                    "type": "Accounts",
+                    "name": "Production"
+                }
+            }
+        }
+    },
+    {
+        "type": "Buckets",
+        "id": "9ststs55-s2t3-1456-6654-321098765432",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 0,
+                    "Expiration": 0,
+                    "LifecycleRule": "static-rule",
+                    "NoncurrentVersionExpiration": 0,
+                    "NoncurrentVersionTransitionsDays": 0,
+                    "NoncurrentVersionTransitionsStorage": "",
+                    "Status": "Disabled",
+                    "TransitionDays": 0,
+                    "TransitionStorage": ""
+                }
+            ],
+            "Name": "marketing-assets",
+            "Region": "eu-west-3",
+            "SizeBytes": 3221225472,
+            "WeeklyGrow": 104857600
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "234567890123",
+                    "type": "Accounts",
+                    "name": "Marketing"
+                }
+            }
+        }
+    },
+    {
+        "type": "Buckets",
+        "id": "0tutut56-t3u4-2567-7765-432109876543",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 2,
+                    "Expiration": 180,
+                    "LifecycleRule": "archive-rule",
+                    "NoncurrentVersionExpiration": 365,
+                    "NoncurrentVersionTransitionsDays": 90,
+                    "NoncurrentVersionTransitionsStorage": "GLACIER",
+                    "Status": "Enabled",
+                    "TransitionDays": 60,
+                    "TransitionStorage": "STANDARD_IA"
+                }
+            ],
+            "Name": "analytics-data",
+            "Region": "us-east-1",
+            "SizeBytes": 6442450944,
+            "WeeklyGrow": 536870912
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "567890123456",
+                    "type": "Accounts",
+                    "name": "Research"
+                }
+            }
+        }
+    },
+    {
+        "type": "Buckets",
+        "id": "1uvuvu57-u4v5-3678-8876-543210987654",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 0,
+                    "Expiration": 30,
+                    "LifecycleRule": "reports-rule",
+                    "NoncurrentVersionExpiration": 60,
+                    "NoncurrentVersionTransitionsDays": 15,
+                    "NoncurrentVersionTransitionsStorage": "STANDARD_IA",
+                    "Status": "Enabled",
+                    "TransitionDays": 7,
+                    "TransitionStorage": "INTELLIGENT_TIERING"
+                }
+            ],
+            "Name": "monthly-reports",
+            "Region": "ap-northeast-2",
+            "SizeBytes": 1073741824,
+            "WeeklyGrow": 52428800
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "345678901234",
+                    "type": "Accounts",
+                    "name": "Security"
+                }
+            }
+        }
+    }
+  ]
+} 
