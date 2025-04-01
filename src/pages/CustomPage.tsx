@@ -77,7 +77,7 @@ const CustomPage: React.FC = () => {
       case 'pie-chart':
         return <PieChartWidget />;
       case 's3-buckets':
-        return <Box sx={{ width: '100%', height: '100%', p: 2 }}><S3BucketsTable /></Box>;
+        return <Box sx={{ width: '100%', height: '100%', p: 2 }}><S3BucketsTable widgetId={widget.id} /></Box>;
       default:
         return null;
     }

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   DataGrid,
   GridColDef,
@@ -173,8 +173,15 @@ const operators = {
   isNotEmpty: 'is not empty',
 };
 
-const S3BucketsTable = () => {
-  const [filters, setFilters] = useState<Filter[]>([]);
+interface S3BucketsTableProps {
+  widgetId: string;
+}
+
+const S3BucketsTable: React.FC<S3BucketsTableProps> = ({ widgetId }) => {
+  const [filters, setFilters] = useState<Filter[]>(() => {
+    const savedFilters = localStorage.getItem(`s3-buckets-filters-${widgetId}`);
+    return savedFilters ? JSON.parse(savedFilters) : [];
+  });
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
   const [currentFilter, setCurrentFilter] = useState<Filter>({
     id: '',
@@ -182,6 +189,11 @@ const S3BucketsTable = () => {
     operator: 'contains',
     value: '',
   });
+
+  // Save filters whenever they change
+  useEffect(() => {
+    localStorage.setItem(`s3-buckets-filters-${widgetId}`, JSON.stringify(filters));
+  }, [filters, widgetId]);
 
   const handleAddFilter = () => {
     if (currentFilter.value || currentFilter.operator === 'isEmpty' || currentFilter.operator === 'isNotEmpty') {
