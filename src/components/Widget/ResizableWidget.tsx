@@ -1,6 +1,6 @@
-import React from 'react';
-import { Paper, Typography, IconButton, Box } from '@mui/material';
-import { ContentCopy as CopyIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import React, { useState } from 'react';
+import { Paper, Typography, IconButton, Box, TextField } from '@mui/material';
+import { ContentCopy as CopyIcon, Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import { useLocation } from 'react-router-dom';
 
 interface ResizableWidgetProps {
@@ -9,6 +9,7 @@ interface ResizableWidgetProps {
   className?: string;
   onCopy?: () => void;
   onDelete?: () => void;
+  onTitleChange?: (newTitle: string) => void;
   showControls?: boolean;
   isHeart?: boolean;
 }
@@ -19,11 +20,14 @@ const ResizableWidget: React.FC<ResizableWidgetProps> = ({
   className,
   onCopy,
   onDelete,
+  onTitleChange,
   showControls = false,
   isHeart = false
 }) => {
   const location = useLocation();
   const isCustomPage = location.pathname.startsWith('/custom/');
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(title);
 
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -38,6 +42,31 @@ const ResizableWidget: React.FC<ResizableWidgetProps> = ({
     e.stopPropagation();
     if (onDelete) {
       onDelete();
+    }
+  };
+
+  const handleTitleEdit = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isCustomPage && showControls) {
+      setEditedTitle(title);
+      setIsEditingTitle(true);
+    }
+  };
+
+  const handleTitleSave = () => {
+    if (editedTitle.trim() && onTitleChange) {
+      onTitleChange(editedTitle.trim());
+    }
+    setIsEditingTitle(false);
+  };
+
+  const handleTitleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleTitleSave();
+    } else if (e.key === 'Escape') {
+      setIsEditingTitle(false);
+      setEditedTitle(title);
     }
   };
 
@@ -92,17 +121,50 @@ const ResizableWidget: React.FC<ResizableWidgetProps> = ({
           mb: 1
         })
       }}>
-        <Typography 
-          variant="h6" 
-          sx={{
-            ...(isHeart && {
-              fontSize: '1.1rem',
-              maxWidth: '70%'
-            })
-          }}
-        >
-          {title}
-        </Typography>
+        {isEditingTitle ? (
+          <TextField
+            value={editedTitle}
+            onChange={(e) => setEditedTitle(e.target.value)}
+            onBlur={handleTitleSave}
+            onKeyDown={handleTitleKeyDown}
+            autoFocus
+            size="small"
+            sx={{ 
+              '& .MuiInputBase-input': {
+                fontSize: '1.1rem',
+                fontWeight: 500,
+                py: 0.5,
+                px: 1,
+              }
+            }}
+          />
+        ) : (
+          <Typography 
+            variant="h6" 
+            onClick={handleTitleEdit}
+            onMouseDown={(e) => e.stopPropagation()}
+            sx={{
+              ...(isHeart && {
+                fontSize: '1.1rem',
+                maxWidth: '70%'
+              }),
+              ...(isCustomPage && showControls && {
+                cursor: 'pointer',
+                userSelect: 'none',
+                '&:hover': {
+                  backgroundColor: 'action.hover',
+                  borderRadius: 1,
+                  px: 1,
+                  mx: -1
+                },
+                px: 1,
+                mx: -1
+              })
+            }}
+          >
+            {title}
+          </Typography>
+        )}
         {isCustomPage && showControls && (
           <Box sx={{ 
             position: 'absolute',

@@ -30,7 +30,7 @@ const WIDGET_TYPES = [
   { type: 'text' as WidgetType, label: 'Text Widget' },
   { type: 'inventory' as WidgetType, label: 'Inventory Widget' },
   { type: 'pie-chart' as WidgetType, label: 'Pie Chart' },
-  { type: 's3-buckets' as WidgetType, label: 'S3 Buckets Table' }
+  { type: 's3-buckets' as WidgetType, label: 'S3 Buckets' }
 ] as const;
 
 export interface Widget {
@@ -42,17 +42,48 @@ export interface Widget {
 
 const CustomPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { pages, addWidgetToPage, removeWidgetFromPage, updatePageLayout, copyWidget } = useCustomPages();
+  const { 
+    pages, 
+    addWidgetToPage, 
+    removeWidgetFromPage, 
+    updatePageLayout, 
+    copyWidget, 
+    updatePageTitle,
+    updateWidgetTitle
+  } = useCustomPages();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newWidgetTitle, setNewWidgetTitle] = useState('');
   const [selectedWidgetType, setSelectedWidgetType] = useState<WidgetType>('text');
   const [isHeartShape, setIsHeartShape] = useState(false);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editedTitle, setEditedTitle] = useState('');
 
   const page = pages.find(p => p.id === id);
 
   if (!page) {
     return <div>Page not found</div>;
   }
+
+  const handleTitleEdit = () => {
+    setEditedTitle(page.title);
+    setIsEditingTitle(true);
+  };
+
+  const handleTitleSave = () => {
+    if (editedTitle.trim()) {
+      updatePageTitle(page.id, editedTitle.trim());
+      setIsEditingTitle(false);
+    }
+  };
+
+  const handleTitleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleTitleSave();
+    } else if (e.key === 'Escape') {
+      setIsEditingTitle(false);
+      setEditedTitle(page.title);
+    }
+  };
 
   const handleAddWidget = () => {
     if (newWidgetTitle.trim()) {
@@ -85,8 +116,42 @@ const CustomPage: React.FC = () => {
 
   return (
     <Box sx={{ flexGrow: 1, p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <h2>{page.title}</h2>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2, alignItems: 'center' }}>
+        {isEditingTitle ? (
+          <TextField
+            value={editedTitle}
+            onChange={(e) => setEditedTitle(e.target.value)}
+            onBlur={handleTitleSave}
+            onKeyDown={handleTitleKeyDown}
+            autoFocus
+            size="small"
+            sx={{ 
+              '& .MuiInputBase-input': {
+                fontSize: 'h4.fontSize',
+                fontWeight: 'h4.fontWeight',
+              }
+            }}
+          />
+        ) : (
+          <Box 
+            component="h2" 
+            onClick={handleTitleEdit}
+            sx={{ 
+              cursor: 'pointer', 
+              '&:hover': { 
+                backgroundColor: 'action.hover',
+                borderRadius: 1,
+                px: 1,
+                mx: -1
+              },
+              display: 'inline-block',
+              px: 1,
+              mx: -1
+            }}
+          >
+            {page.title}
+          </Box>
+        )}
         <Button
           variant="contained"
           startIcon={<AddIcon />}
@@ -113,6 +178,7 @@ const CustomPage: React.FC = () => {
               showControls={true}
               onCopy={() => copyWidget(page.id, widget.id)}
               onDelete={() => removeWidgetFromPage(page.id, widget.id)}
+              onTitleChange={(newTitle) => updateWidgetTitle(page.id, widget.id, newTitle)}
               isHeart={widget.isHeart}
             >
               {renderWidget(widget)}

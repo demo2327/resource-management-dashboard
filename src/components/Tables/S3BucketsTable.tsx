@@ -31,6 +31,7 @@ import {
   Add as AddIcon,
   Delete as DeleteIcon,
   FilterList as FilterListIcon,
+  Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import s3InventoryData from '../../data/s3Inventory.json';
 
@@ -189,11 +190,16 @@ const S3BucketsTable: React.FC<S3BucketsTableProps> = ({ widgetId }) => {
     operator: 'contains',
     value: '',
   });
+  const [refreshKey, setRefreshKey] = useState(0);
 
   // Save filters whenever they change
   useEffect(() => {
     localStorage.setItem(`s3-buckets-filters-${widgetId}`, JSON.stringify(filters));
   }, [filters, widgetId]);
+
+  const handleRefresh = () => {
+    setRefreshKey(prev => prev + 1);
+  };
 
   const handleAddFilter = () => {
     if (currentFilter.value || currentFilter.operator === 'isEmpty' || currentFilter.operator === 'isNotEmpty') {
@@ -280,6 +286,14 @@ const S3BucketsTable: React.FC<S3BucketsTableProps> = ({ widgetId }) => {
       >
         Custom Filters
       </Button>
+      <Button
+        startIcon={<RefreshIcon />}
+        onClick={handleRefresh}
+        variant="outlined"
+        size="small"
+      >
+        Refresh
+      </Button>
       {filters.length > 0 && (
         <Stack direction="row" spacing={1}>
           {filters.map(filter => (
@@ -301,12 +315,14 @@ const S3BucketsTable: React.FC<S3BucketsTableProps> = ({ widgetId }) => {
       onMouseDown={(e) => e.stopPropagation()}
     >
       <DataGrid
+        key={refreshKey}
         rows={filteredRows}
         columns={columns}
         getRowId={(row: S3Bucket) => row.id}
         components={{
           Toolbar: CustomToolbar,
         }}
+        density="compact"
         initialState={{
           pagination: {
             pageSize: 10,

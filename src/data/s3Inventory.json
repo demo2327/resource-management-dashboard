@@ -610,6 +610,38 @@
     },
     {
         "type": "Buckets",
+        "id": "8abcd123-45ef-6789-ghij-klmnopqrstuv",
+        "attributes": {
+            "lifecycle": [
+                {
+                    "AbortIncompleteMultipartUpload": 2,
+                    "Expiration": 180,
+                    "LifecycleRule": "archive-rule",
+                    "NoncurrentVersionExpiration": 365,
+                    "NoncurrentVersionTransitionsDays": 90,
+                    "NoncurrentVersionTransitionsStorage": "GLACIER",
+                    "Status": "Enabled",
+                    "TransitionDays": 60,
+                    "TransitionStorage": "STANDARD_IA"
+                }
+            ],
+            "Name": "analytics-data-2",
+            "Region": "us-east-1",
+            "SizeBytes": 64420944,
+            "WeeklyGrow": 5368912
+        },
+        "relationships": {
+            "Account": {
+                "data": {
+                    "id": "567890123456",
+                    "type": "Accounts",
+                    "name": "Research"
+                }
+            }
+        }
+    },
+    {
+        "type": "Buckets",
         "id": "1uvuvu57-u4v5-3678-8876-543210987654",
         "attributes": {
             "lifecycle": [
