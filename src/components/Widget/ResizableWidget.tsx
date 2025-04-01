@@ -1,8 +1,28 @@
+/**
+ * Resizable Widget Component
+ * 
+ * This component implements a flexible container for dashboard widgets with resizing,
+ * dragging, and customization capabilities. It provides a consistent look and feel
+ * across different widget types.
+ * 
+ * Technical Concepts:
+ * 1. Material-UI Paper component for elevation and styling
+ * 2. Custom title editing functionality
+ * 3. Widget control management (copy, delete)
+ * 4. Heart-shaped widget variant support
+ */
+
 import React, { useState } from 'react';
 import { Paper, Typography, IconButton, Box, TextField } from '@mui/material';
 import { ContentCopy as CopyIcon, Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import { useLocation } from 'react-router-dom';
 
+/**
+ * ResizableWidgetProps Interface
+ * 
+ * Defines the props for the ResizableWidget component.
+ * Includes title, content, and various control callbacks.
+ */
 interface ResizableWidgetProps {
   title: string;
   children?: React.ReactNode;
@@ -14,6 +34,21 @@ interface ResizableWidgetProps {
   isHeart?: boolean;
 }
 
+/**
+ * ResizableWidget Component
+ * 
+ * A container component for dashboard widgets with resizing and customization capabilities.
+ * 
+ * Features:
+ * - Resizable and draggable container
+ * - Editable widget title
+ * - Copy and delete controls
+ * - Heart-shaped variant support
+ * - Persistent layout management
+ * 
+ * @component
+ * @param {ResizableWidgetProps} props - Component props
+ */
 const ResizableWidget: React.FC<ResizableWidgetProps> = ({ 
   title, 
   children, 
@@ -29,6 +64,10 @@ const ResizableWidget: React.FC<ResizableWidgetProps> = ({
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState(title);
 
+  /**
+   * Handles the copy action for the widget
+   * @param e - Mouse event
+   */
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -37,6 +76,10 @@ const ResizableWidget: React.FC<ResizableWidgetProps> = ({
     }
   };
 
+  /**
+   * Handles the delete action for the widget
+   * @param e - Mouse event
+   */
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -45,6 +88,10 @@ const ResizableWidget: React.FC<ResizableWidgetProps> = ({
     }
   };
 
+  /**
+   * Initiates title editing mode
+   * @param e - Mouse event
+   */
   const handleTitleEdit = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -54,6 +101,9 @@ const ResizableWidget: React.FC<ResizableWidgetProps> = ({
     }
   };
 
+  /**
+   * Saves the edited title
+   */
   const handleTitleSave = () => {
     if (editedTitle.trim() && onTitleChange) {
       onTitleChange(editedTitle.trim());
@@ -61,6 +111,10 @@ const ResizableWidget: React.FC<ResizableWidgetProps> = ({
     setIsEditingTitle(false);
   };
 
+  /**
+   * Handles keyboard events during title editing
+   * @param e - Keyboard event
+   */
   const handleTitleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleTitleSave();
@@ -99,6 +153,7 @@ const ResizableWidget: React.FC<ResizableWidgetProps> = ({
         })
       }}
     >
+      {/* Heart shape SVG definition */}
       {isHeart && (
         <svg width="0" height="0">
           <defs>
@@ -108,6 +163,8 @@ const ResizableWidget: React.FC<ResizableWidgetProps> = ({
           </defs>
         </svg>
       )}
+
+      {/* Widget Header */}
       <Box sx={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
@@ -121,6 +178,7 @@ const ResizableWidget: React.FC<ResizableWidgetProps> = ({
           mb: 1
         })
       }}>
+        {/* Title or Title Editor */}
         {isEditingTitle ? (
           <TextField
             value={editedTitle}
@@ -165,6 +223,8 @@ const ResizableWidget: React.FC<ResizableWidgetProps> = ({
             {title}
           </Typography>
         )}
+
+        {/* Widget Controls */}
         {isCustomPage && showControls && (
           <Box sx={{ 
             position: 'absolute',
@@ -206,6 +266,8 @@ const ResizableWidget: React.FC<ResizableWidgetProps> = ({
           </Box>
         )}
       </Box>
+
+      {/* Widget Content */}
       <Box sx={{ 
         flex: 1, 
         overflow: 'auto',

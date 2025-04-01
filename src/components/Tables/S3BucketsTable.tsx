@@ -1,3 +1,16 @@
+/**
+ * AWS S3 Buckets Table Component
+ * 
+ * This component implements a sophisticated data grid for displaying and managing AWS S3 buckets.
+ * It provides advanced filtering, sorting, and visualization capabilities for S3 bucket data.
+ * 
+ * Technical Concepts:
+ * 1. Material-UI DataGrid for advanced table functionality
+ * 2. Custom filtering system with drag-and-drop support
+ * 3. Persistent filter state management
+ * 4. AWS S3 data visualization and management
+ */
+
 import React, { useState, useMemo, useEffect } from 'react';
 import {
   DataGrid,
@@ -33,6 +46,12 @@ import {
 } from '@mui/icons-material';
 import s3InventoryData from '../../data/s3Inventory.json';
 
+/**
+ * LifecycleRule Interface
+ * 
+ * Defines the structure of S3 bucket lifecycle rules.
+ * Contains configuration for object transitions, expirations, and versioning.
+ */
 interface LifecycleRule {
   AbortIncompleteMultipartUpload: number;
   Expiration: number;
@@ -45,6 +64,12 @@ interface LifecycleRule {
   TransitionStorage: string;
 }
 
+/**
+ * S3Bucket Interface
+ * 
+ * Represents an AWS S3 bucket with its attributes and relationships.
+ * Includes metadata such as name, region, size, and lifecycle rules.
+ */
 interface S3Bucket {
   type: string;
   id: string;
@@ -66,7 +91,11 @@ interface S3Bucket {
   };
 }
 
-// Helper function to format bytes to human readable format
+/**
+ * Helper function to format byte sizes into human-readable format
+ * @param bytes - The number of bytes to format
+ * @returns Formatted string with appropriate unit (Bytes, KB, MB, GB, TB)
+ */
 const formatBytes = (bytes: number): string => {
   if (bytes === 0) return '0 Bytes';
   const k = 1024;
@@ -75,6 +104,10 @@ const formatBytes = (bytes: number): string => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
+/**
+ * Column definitions for the S3 buckets data grid
+ * Includes formatting, sorting, and custom rendering for each column
+ */
 const columns: GridColDef[] = [
   { 
     field: 'name', 
@@ -156,6 +189,9 @@ const columns: GridColDef[] = [
   },
 ];
 
+/**
+ * Filter-related interfaces for the custom filtering system
+ */
 interface Filter {
   id: string;
   field: string;
@@ -171,6 +207,9 @@ interface FilterCondition {
   children?: FilterCondition[];
 }
 
+/**
+ * Available operators for the filtering system
+ */
 const operators = {
   contains: 'contains',
   equals: 'equals',
@@ -180,6 +219,12 @@ const operators = {
   isNotEmpty: 'is not empty',
 };
 
+/**
+ * FilterElement Interface
+ * 
+ * Represents a single element in the filter expression builder.
+ * Can be a filter condition, operator, or parenthesis.
+ */
 interface FilterElement {
   id: string;
   type: 'filter' | 'operator' | 'parenthesis';
@@ -196,6 +241,21 @@ interface S3BucketsTableProps {
   widgetId: string;
 }
 
+/**
+ * S3BucketsTable Component
+ * 
+ * Displays AWS S3 buckets in a feature-rich data grid with advanced filtering capabilities.
+ * 
+ * Features:
+ * - Sortable and filterable columns
+ * - Custom filter builder with drag-and-drop support
+ * - Persistent filter state
+ * - AWS S3 console integration
+ * - Size and growth metrics visualization
+ * 
+ * @component
+ * @param {S3BucketsTableProps} props - Component props
+ */
 const S3BucketsTable: React.FC<S3BucketsTableProps> = ({ widgetId }) => {
   const [filterElements, setFilterElements] = useState<FilterElement[]>(() => {
     const saved = localStorage.getItem(`s3-buckets-filters-${widgetId}`);
@@ -210,6 +270,7 @@ const S3BucketsTable: React.FC<S3BucketsTableProps> = ({ widgetId }) => {
   });
   const [refreshKey, setRefreshKey] = useState(0);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const [pageSize, setPageSize] = useState(5); // Default page size
 
   useEffect(() => {
     localStorage.setItem(`s3-buckets-filters-${widgetId}`, JSON.stringify(filterElements));
@@ -532,14 +593,15 @@ const S3BucketsTable: React.FC<S3BucketsTableProps> = ({ widgetId }) => {
         density="compact"
         initialState={{
           pagination: {
-            pageSize: 10,
+            pageSize: 5,
           },
           sorting: {
             sortModel: [{ field: 'name', sort: 'asc' }] as GridSortModel,
           },
         }}
-        pageSize={10}
-        rowsPerPageOptions={[5, 10, 25, 50]}
+        pageSize={pageSize}
+        onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+        rowsPerPageOptions={[1, 2, 3, 5, 8, 13, 21]}
         disableSelectionOnClick
         autoHeight
         sx={{

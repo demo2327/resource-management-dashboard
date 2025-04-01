@@ -1,3 +1,17 @@
+/**
+ * Custom Dashboard Page Component
+ * 
+ * This component implements a flexible dashboard page with draggable and resizable widgets.
+ * It demonstrates several advanced React and TypeScript concepts:
+ * 
+ * Technical Concepts:
+ * 1. React Grid Layout for widget positioning and resizing
+ * 2. Dynamic component rendering based on widget types
+ * 3. Custom context integration for state management
+ * 4. TypeScript type definitions and interfaces
+ * 5. Material-UI components and styling
+ */
+
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
@@ -23,9 +37,18 @@ import 'react-resizable/css/styles.css';
 import PieChartWidget from '../components/Widget/PieChartWidget';
 import S3BucketsTable from '../components/Tables/S3BucketsTable';
 
-// Define widget type as a union type
+/**
+ * Widget Type Definition
+ * 
+ * Defines the available types of widgets that can be added to the dashboard
+ * Each type corresponds to a specific widget component
+ */
 export type WidgetType = 'text' | 'inventory' | 'pie-chart' | 's3-buckets';
 
+/**
+ * Available widget types with their display labels
+ * Used in the widget selection dialog
+ */
 const WIDGET_TYPES = [
   { type: 'text' as WidgetType, label: 'Text Widget' },
   { type: 'inventory' as WidgetType, label: 'Inventory Widget' },
@@ -33,6 +56,15 @@ const WIDGET_TYPES = [
   { type: 's3-buckets' as WidgetType, label: 'S3 Buckets' }
 ] as const;
 
+/**
+ * Widget Interface
+ * 
+ * Defines the structure of a widget object
+ * @property {string} id - Unique identifier for the widget
+ * @property {string} title - Display title of the widget
+ * @property {WidgetType} type - Type of widget (determines rendered content)
+ * @property {boolean} [isHeart] - Optional flag for heart-shaped styling
+ */
 export interface Widget {
   id: string;
   title: string;
@@ -40,8 +72,22 @@ export interface Widget {
   isHeart?: boolean;
 }
 
+/**
+ * CustomPage Component
+ * 
+ * A dynamic dashboard page that allows users to:
+ * - Add/remove widgets of different types
+ * - Drag and resize widgets
+ * - Edit page and widget titles
+ * - Copy existing widgets
+ * 
+ * @component
+ */
 const CustomPage: React.FC = () => {
+  // Get page ID from URL parameters
   const { id } = useParams<{ id: string }>();
+  
+  // Access custom pages context for state management
   const { 
     pages, 
     addWidgetToPage, 
@@ -51,6 +97,8 @@ const CustomPage: React.FC = () => {
     updatePageTitle,
     updateWidgetTitle
   } = useCustomPages();
+
+  // Local state for managing the UI
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newWidgetTitle, setNewWidgetTitle] = useState('');
   const [selectedWidgetType, setSelectedWidgetType] = useState<WidgetType>('text');
@@ -58,17 +106,26 @@ const CustomPage: React.FC = () => {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState('');
 
+  // Find the current page from the pages array
   const page = pages.find(p => p.id === id);
 
   if (!page) {
     return <div>Page not found</div>;
   }
 
+  /**
+   * Initiates page title editing
+   * Sets up the editing state with current title
+   */
   const handleTitleEdit = () => {
     setEditedTitle(page.title);
     setIsEditingTitle(true);
   };
 
+  /**
+   * Saves the edited page title
+   * Updates the title if it's not empty
+   */
   const handleTitleSave = () => {
     if (editedTitle.trim()) {
       updatePageTitle(page.id, editedTitle.trim());
@@ -76,6 +133,11 @@ const CustomPage: React.FC = () => {
     }
   };
 
+  /**
+   * Handles keyboard events during title editing
+   * Enter: Save changes
+   * Escape: Cancel editing
+   */
   const handleTitleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleTitleSave();
@@ -85,6 +147,10 @@ const CustomPage: React.FC = () => {
     }
   };
 
+  /**
+   * Handles adding a new widget to the page
+   * Creates widget with specified title, type, and shape
+   */
   const handleAddWidget = () => {
     if (newWidgetTitle.trim()) {
       addWidgetToPage(page.id, selectedWidgetType, newWidgetTitle, isHeartShape);
@@ -95,10 +161,19 @@ const CustomPage: React.FC = () => {
     }
   };
 
+  /**
+   * Updates the layout when widgets are moved or resized
+   * @param {Layout[]} layout - New layout configuration from react-grid-layout
+   */
   const handleLayoutChange = (layout: any) => {
     updatePageLayout(page.id, layout);
   };
 
+  /**
+   * Renders the appropriate widget content based on widget type
+   * @param {Widget} widget - The widget object to render
+   * @returns {JSX.Element | null} The rendered widget content
+   */
   const renderWidget = (widget: Widget) => {
     switch (widget.type) {
       case 'text':
@@ -116,6 +191,7 @@ const CustomPage: React.FC = () => {
 
   return (
     <Box sx={{ flexGrow: 1, p: 3 }}>
+      {/* Page Header with Title and Add Widget Button */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2, alignItems: 'center' }}>
         {isEditingTitle ? (
           <TextField
@@ -161,6 +237,7 @@ const CustomPage: React.FC = () => {
         </Button>
       </Box>
 
+      {/* Grid Layout for Widgets */}
       <GridLayout
         className="layout"
         layout={page.layout}
@@ -187,6 +264,7 @@ const CustomPage: React.FC = () => {
         ))}
       </GridLayout>
 
+      {/* Add Widget Dialog */}
       <Dialog 
         open={isDialogOpen} 
         onClose={() => setIsDialogOpen(false)}
