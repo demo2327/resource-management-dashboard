@@ -1,9 +1,36 @@
+/**
+ * Theme Context and Provider
+ * 
+ * This module implements a comprehensive theming system using Material-UI's ThemeProvider
+ * and React Context. It demonstrates advanced theming concepts including:
+ * 
+ * Technical Concepts:
+ * 1. Material-UI Theme Creation and Customization
+ * 2. Multiple Theme Definitions (Light/Dark/Custom)
+ * 3. Dynamic Theme Switching
+ * 4. Component-Level Style Overrides
+ * 5. Custom Typography and Color Palettes
+ */
+
 import React, { createContext, useContext, useState } from 'react';
 import { ThemeProvider as MuiThemeProvider, createTheme, ThemeOptions } from '@mui/material';
 
+/**
+ * Available theme modes in the application
+ * Each theme represents a complete design system with its own colors, typography, and component styles
+ */
 export type ThemeMode = 'broadridge' | 'dark' | 'ocean' | 'forest' | 'nyc' | 'hibeanie' | 'india';
 
+/**
+ * Theme Definitions
+ * 
+ * Each theme is created using Material-UI's createTheme function and includes:
+ * - Custom color palette
+ * - Typography settings
+ * - Component style overrides
+ */
 const themes = {
+  // Broadridge Theme - Corporate design system
   broadridge: createTheme({
     palette: {
       mode: 'light',
@@ -48,6 +75,7 @@ const themes = {
       divider: 'rgba(0, 56, 101, 0.12)',
     },
     typography: {
+      // Corporate typography system
       fontFamily: "'Open Sans', 'Arial', sans-serif",
       h1: {
         fontFamily: "'Open Sans', 'Arial', sans-serif",
@@ -82,6 +110,7 @@ const themes = {
       },
     },
     components: {
+      // Component-specific style overrides
       MuiAppBar: {
         styleOverrides: {
           root: {
@@ -140,6 +169,8 @@ const themes = {
       },
     },
   }),
+
+  // Dark Theme - Material-UI's dark mode with custom overrides
   dark: createTheme({
     palette: {
       mode: 'dark',
@@ -171,6 +202,8 @@ const themes = {
       },
     },
   }),
+
+  // Ocean Theme - Coastal/marine inspired design system
   ocean: createTheme({
     palette: {
       mode: 'light',
@@ -752,21 +785,49 @@ const themes = {
   }),
 };
 
+/**
+ * Theme Context Type Definition
+ * 
+ * Defines the shape of the context value object
+ * @property {ThemeMode} currentTheme - Currently active theme
+ * @property {Function} setTheme - Function to change the active theme
+ */
 interface ThemeContextType {
   currentTheme: ThemeMode;
   setTheme: (theme: ThemeMode) => void;
 }
 
+// Create the theme context with default values
 const ThemeContext = createContext<ThemeContextType>({
   currentTheme: 'broadridge',
   setTheme: () => {},
 });
 
+/**
+ * Custom hook for consuming the theme context
+ * Provides easy access to current theme and theme switching functionality
+ * 
+ * @returns {ThemeContextType} The theme context value
+ */
 export const useTheme = () => useContext(ThemeContext);
 
+/**
+ * Theme Provider Component
+ * 
+ * Wraps the application with both the custom theme context and Material-UI's ThemeProvider
+ * Manages theme state and provides theme switching functionality
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Child components
+ */
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentTheme, setCurrentTheme] = useState<ThemeMode>('broadridge');
 
+  /**
+   * Updates the current theme
+   * @param {ThemeMode} theme - The new theme to apply
+   */
   const setTheme = (theme: ThemeMode) => {
     setCurrentTheme(theme);
     document.documentElement.setAttribute('data-theme', theme);

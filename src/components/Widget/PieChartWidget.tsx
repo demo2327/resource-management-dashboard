@@ -1,3 +1,16 @@
+/**
+ * Pie Chart Widget Component
+ * 
+ * This component implements a responsive pie chart visualization using Chart.js.
+ * It provides a customizable chart for displaying proportional data with dynamic theming.
+ * 
+ * Technical Concepts:
+ * 1. Chart.js for data visualization
+ * 2. Material-UI theming integration
+ * 3. Responsive chart rendering
+ * 4. Dynamic color palette management
+ */
+
 import React from 'react';
 import { Box, useTheme } from '@mui/material';
 import { Pie } from 'react-chartjs-2';
@@ -12,10 +25,27 @@ import {
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-// Sample pet data with dynamic colors
+/**
+ * PieChartWidget Component
+ * 
+ * Displays data in a pie chart format with customizable styling and tooltips.
+ * 
+ * Features:
+ * - Responsive chart sizing
+ * - Dynamic color theming
+ * - Interactive tooltips
+ * - Custom legend positioning
+ * - Percentage-based data display
+ * 
+ * @component
+ */
 const PieChartWidget: React.FC = () => {
   const theme = useTheme();
 
+  /**
+   * Sample pet data with dynamic colors based on theme
+   * Demonstrates the widget's data structure and theming capabilities
+   */
   const petData = {
     labels: ['Dogs', 'Cats', 'Birds', 'Fish', 'Small Pets'],
     datasets: [
@@ -40,7 +70,10 @@ const PieChartWidget: React.FC = () => {
     ],
   };
 
-  // Chart options with improved text rendering
+  /**
+   * Chart options configuration
+   * Includes responsive settings, legend positioning, and tooltip customization
+   */
   const options: ChartOptions<'pie'> = {
     responsive: true,
     maintainAspectRatio: false,
