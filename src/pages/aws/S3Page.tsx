@@ -29,7 +29,7 @@ const S3Page: React.FC = () => {
         <div key="inventory">
           <ResizableWidget title="S3 Buckets Inventory">
             <Box sx={{ width: '100%', height: '100%', p: 2 }}>
-              <S3BucketsTable />
+              <S3BucketsTable widgetId="s3-page-default" />
             </Box>
           </ResizableWidget>
         </div>

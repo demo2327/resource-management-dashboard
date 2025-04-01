@@ -18,6 +18,8 @@ interface CustomPagesContextType {
   updatePageLayout: (pageId: string, layout: Layout[]) => void;
   copyWidget: (pageId: string, widgetId: string) => void;
   resetAllPages: () => void;
+  updatePageTitle: (pageId: string, newTitle: string) => void;
+  updateWidgetTitle: (pageId: string, widgetId: string, newTitle: string) => void;
 }
 
 const CustomPagesContext = createContext<CustomPagesContextType>({
@@ -29,6 +31,8 @@ const CustomPagesContext = createContext<CustomPagesContextType>({
   updatePageLayout: () => {},
   copyWidget: () => {},
   resetAllPages: () => {},
+  updatePageTitle: () => {},
+  updateWidgetTitle: () => {},
 });
 
 export const useCustomPages = () => {
@@ -169,6 +173,38 @@ export const CustomPagesProvider: React.FC<{ children: React.ReactNode }> = ({ c
     keysToRemove.forEach(key => localStorage.removeItem(key));
   };
 
+  const updatePageTitle = (pageId: string, newTitle: string) => {
+    setPages(pages.map(page => {
+      if (page.id === pageId) {
+        return {
+          ...page,
+          title: newTitle
+        };
+      }
+      return page;
+    }));
+  };
+
+  const updateWidgetTitle = (pageId: string, widgetId: string, newTitle: string) => {
+    setPages(pages.map(page => {
+      if (page.id === pageId) {
+        return {
+          ...page,
+          widgets: page.widgets.map(widget => {
+            if (widget.id === widgetId) {
+              return {
+                ...widget,
+                title: newTitle
+              };
+            }
+            return widget;
+          })
+        };
+      }
+      return page;
+    }));
+  };
+
   return (
     <CustomPagesContext.Provider
       value={{
@@ -179,7 +215,9 @@ export const CustomPagesProvider: React.FC<{ children: React.ReactNode }> = ({ c
         removeWidgetFromPage,
         updatePageLayout,
         copyWidget,
-        resetAllPages
+        resetAllPages,
+        updatePageTitle,
+        updateWidgetTitle
       }}
     >
       {children}
