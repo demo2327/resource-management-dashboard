@@ -270,6 +270,7 @@ const S3BucketsTable: React.FC<S3BucketsTableProps> = ({ widgetId }) => {
   });
   const [refreshKey, setRefreshKey] = useState(0);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const [pageSize, setPageSize] = useState(5); // Default page size
 
   useEffect(() => {
     localStorage.setItem(`s3-buckets-filters-${widgetId}`, JSON.stringify(filterElements));
@@ -592,14 +593,15 @@ const S3BucketsTable: React.FC<S3BucketsTableProps> = ({ widgetId }) => {
         density="compact"
         initialState={{
           pagination: {
-            pageSize: 10,
+            pageSize: 5,
           },
           sorting: {
             sortModel: [{ field: 'name', sort: 'asc' }] as GridSortModel,
           },
         }}
-        pageSize={10}
-        rowsPerPageOptions={[5, 10, 25, 50]}
+        pageSize={pageSize}
+        onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+        rowsPerPageOptions={[1, 2, 3, 5, 8, 13, 21]}
         disableSelectionOnClick
         autoHeight
         sx={{
