@@ -10,6 +10,12 @@
  * 3. Custom context integration for state management
  * 4. TypeScript type definitions and interfaces
  * 5. Material-UI components and styling
+ * 
+ * Code Maintenance Guidelines:
+ * 1. Keep all comments up-to-date with code changes
+ * 2. Update component documentation when adding new features
+ * 3. Document any changes to the component's structure or behavior
+ * 4. Maintain consistent comment formatting and style
  */
 
 import React, { useState } from 'react';
@@ -27,8 +33,12 @@ import {
   TextField,
   FormControlLabel,
   Switch,
+  Typography,
+  Snackbar,
+  Alert,
 } from '@mui/material';
-import { Add as AddIcon } from '@mui/icons-material';
+import { Add as AddIcon, Share as ShareIcon } from '@mui/icons-material';
+import { parse, stringify } from 'yaml';
 import GridLayout from 'react-grid-layout';
 import ResizableWidget from '../components/Widget/ResizableWidget';
 import { useCustomPages } from '../context/CustomPagesContext';
@@ -105,6 +115,10 @@ const CustomPage: React.FC = () => {
   const [isHeartShape, setIsHeartShape] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState('');
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
+  const [importJson, setImportJson] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   // Find the current page from the pages array
   const page = pages.find(p => p.id === id);
@@ -189,10 +203,96 @@ const CustomPage: React.FC = () => {
     }
   };
 
+  /**
+   * Handles sharing the page configuration
+   * Displays a dialog with the YAML configuration
+   */
+  const handleShare = () => {
+    setIsShareDialogOpen(true);
+  };
+
+  /**
+   * Generates a YAML configuration with comments explaining the structure
+   */
+  const generateYamlConfig = () => {
+    const config = {
+      title: page.title,
+      widgets: page.widgets,
+      layout: page.layout
+    };
+
+    // Add comments to explain the configuration
+    const yamlWithComments = `# Custom Page Configuration
+# This YAML file contains the complete configuration for a custom dashboard page
+# You can use this configuration to recreate the page layout and widgets
+
+# Page title that will be displayed in the header
+title: ${page.title}
+
+# List of widgets on the page
+# Each widget has:
+# - id: Unique identifier (will be regenerated on import)
+# - title: Display title of the widget
+# - type: Type of widget (text, inventory, pie-chart, or s3-buckets)
+# - isHeart: Optional flag for heart-shaped styling
+widgets:
+${stringify(config.widgets, { indent: 2 })}
+
+# Layout configuration for widget positioning
+# Each layout item has:
+# - i: Widget ID (matching the widget.id above)
+# - x: Horizontal position (0-19)
+# - y: Vertical position (in grid units)
+# - w: Width (in grid units)
+# - h: Height (in grid units)
+layout:
+${stringify(config.layout, { indent: 2 })}`;
+
+    return yamlWithComments;
+  };
+
+  /**
+   * Handles importing a page configuration
+   * Validates and processes the YAML input
+   */
+  const handleImport = () => {
+    try {
+      const config = parse(importJson);
+      // Validate required fields
+      if (!config.title || !Array.isArray(config.widgets) || !Array.isArray(config.layout)) {
+        throw new Error('Invalid page configuration: missing required fields');
+      }
+      setIsImportDialogOpen(false);
+      setImportJson('');
+      setError(null);
+    } catch (error) {
+      console.error('Invalid YAML configuration:', error);
+      setError(error instanceof Error ? error.message : 'Invalid YAML configuration');
+    }
+  };
+
   return (
-    <Box sx={{ flexGrow: 1, p: 3 }}>
-      {/* Page Header with Title and Add Widget Button */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2, alignItems: 'center' }}>
+    <Box sx={{ flexGrow: 1 }}>
+      {/* Page Header Bar
+       * A sticky header bar that contains:
+       * - Editable page title
+       * - Add Widget button
+       * Styled to match Material-UI AppBar height and appearance
+       */}
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        px: 3,
+        py: 1.5,
+        backgroundColor: 'action.hover',
+        borderBottom: 1,
+        borderColor: 'divider',
+        height: '64px', // Standard Material-UI AppBar height
+        position: 'sticky',
+        top: 0,
+        zIndex: 1
+      }}>
         {isEditingTitle ? (
           <TextField
             value={editedTitle}
@@ -203,8 +303,8 @@ const CustomPage: React.FC = () => {
             size="small"
             sx={{ 
               '& .MuiInputBase-input': {
-                fontSize: 'h4.fontSize',
-                fontWeight: 'h4.fontWeight',
+                fontSize: 'h6.fontSize',
+                fontWeight: 'h6.fontWeight',
               }
             }}
           />
@@ -215,54 +315,145 @@ const CustomPage: React.FC = () => {
             sx={{ 
               cursor: 'pointer', 
               '&:hover': { 
-                backgroundColor: 'action.hover',
+                backgroundColor: 'action.selected',
                 borderRadius: 1,
                 px: 1,
                 mx: -1
               },
               display: 'inline-block',
               px: 1,
-              mx: -1
+              mx: -1,
+              fontSize: 'h6.fontSize',
+              fontWeight: 'h6.fontWeight'
             }}
           >
             {page.title}
           </Box>
         )}
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => setIsDialogOpen(true)}
-        >
-          Add Widget
-        </Button>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button
+            variant="contained"
+            startIcon={<ShareIcon />}
+            onClick={handleShare}
+            size="small"
+          >
+            Share
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => setIsDialogOpen(true)}
+            size="small"
+          >
+            Add Widget
+          </Button>
+        </Box>
       </Box>
 
-      {/* Grid Layout for Widgets */}
-      <GridLayout
-        className="layout"
-        layout={page.layout}
-        cols={20}
-        rowHeight={100}
-        width={2000}
-        isDraggable={true}
-        isResizable={true}
-        onLayoutChange={handleLayoutChange}
+      {/* Main Content Area
+       * Contains the grid layout for widgets with proper padding
+       */}
+      <Box sx={{ p: 3 }}>
+        <GridLayout
+          className="layout"
+          layout={page.layout}
+          cols={20}
+          rowHeight={100}
+          width={2000}
+          isDraggable={true}
+          isResizable={true}
+          onLayoutChange={handleLayoutChange}
+        >
+          {page.widgets.map((widget) => (
+            <div key={widget.id}>
+              <ResizableWidget 
+                title={widget.title}
+                showControls={true}
+                onCopy={() => copyWidget(page.id, widget.id)}
+                onDelete={() => removeWidgetFromPage(page.id, widget.id)}
+                onTitleChange={(newTitle) => updateWidgetTitle(page.id, widget.id, newTitle)}
+                isHeart={widget.isHeart}
+              >
+                {renderWidget(widget)}
+              </ResizableWidget>
+            </div>
+          ))}
+        </GridLayout>
+      </Box>
+
+      {/* Share Configuration Dialog */}
+      <Dialog
+        open={isShareDialogOpen}
+        onClose={() => setIsShareDialogOpen(false)}
+        maxWidth="md"
+        fullWidth
       >
-        {page.widgets.map((widget) => (
-          <div key={widget.id}>
-            <ResizableWidget 
-              title={widget.title}
-              showControls={true}
-              onCopy={() => copyWidget(page.id, widget.id)}
-              onDelete={() => removeWidgetFromPage(page.id, widget.id)}
-              onTitleChange={(newTitle) => updateWidgetTitle(page.id, widget.id, newTitle)}
-              isHeart={widget.isHeart}
-            >
-              {renderWidget(widget)}
-            </ResizableWidget>
-          </div>
-        ))}
-      </GridLayout>
+        <DialogTitle>Share Page Configuration</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" sx={{ mb: 2 }}>
+            Copy this configuration to share your page layout:
+          </Typography>
+          <TextField
+            multiline
+            fullWidth
+            rows={15}
+            value={generateYamlConfig()}
+            InputProps={{
+              readOnly: true,
+            }}
+            sx={{
+              '& .MuiInputBase-input': {
+                fontFamily: 'monospace',
+                fontSize: '0.875rem',
+              }
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsShareDialogOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Import Configuration Dialog */}
+      <Dialog
+        open={isImportDialogOpen}
+        onClose={() => setIsImportDialogOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>Import Page Configuration</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" sx={{ mb: 2 }}>
+            Paste the page configuration YAML below:
+          </Typography>
+          <TextField
+            multiline
+            fullWidth
+            rows={15}
+            value={importJson}
+            onChange={(e) => setImportJson(e.target.value)}
+            placeholder="Paste configuration YAML here..."
+            error={importJson !== '' && !isValidYaml(importJson)}
+            helperText={importJson !== '' && !isValidYaml(importJson) ? 'Invalid YAML format' : ''}
+            sx={{
+              '& .MuiInputBase-input': {
+                fontFamily: 'monospace',
+                fontSize: '0.875rem',
+              }
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsImportDialogOpen(false)}>Cancel</Button>
+          <Button 
+            onClick={handleImport} 
+            variant="contained"
+            disabled={!isValidYaml(importJson)}
+          >
+            Import
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Add Widget Dialog */}
       <Dialog 
@@ -312,8 +503,30 @@ const CustomPage: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Error Snackbar */}
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={() => setError(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setError(null)} severity="error" sx={{ width: '100%' }}>
+          {error}
+        </Alert>
+      </Snackbar>
     </Box>
   );
+};
+
+// Helper function to validate YAML
+const isValidYaml = (str: string): boolean => {
+  try {
+    parse(str);
+    return true;
+  } catch (e) {
+    return false;
+  }
 };
 
 export default CustomPage; 

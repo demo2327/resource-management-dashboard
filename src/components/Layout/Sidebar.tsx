@@ -35,6 +35,10 @@ import {
   Typography,
   IconButton,
   Tooltip,
+  Tabs,
+  Tab,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import {
   Home,
@@ -52,9 +56,11 @@ import {
   Add as AddIcon,
   Delete as DeleteIcon,
   Refresh as RefreshIcon,
+  Share as ShareIcon,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCustomPages } from '../../context/CustomPagesContext';
+import { parse } from 'yaml';
 
 // Width of the drawer in pixels - MUI recommended width for permanent drawers
 const drawerWidth = 240;
@@ -80,12 +86,15 @@ const Sidebar: React.FC = () => {
   // State for managing the "Add New Page" dialog
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newPageTitle, setNewPageTitle] = useState('');
+  const [importJson, setImportJson] = useState('');
+  const [showImportTab, setShowImportTab] = useState(false);
   
   // Custom pages context for managing dynamic pages
-  const { pages, addPage, removePage, resetAllPages } = useCustomPages();
+  const { pages, addPage, removePage, resetAllPages, importPage } = useCustomPages();
   
   // State for reset confirmation dialog
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   /**
    * Toggles the AWS resources section expansion state
@@ -121,6 +130,23 @@ const Sidebar: React.FC = () => {
     resetAllPages();
     setShowResetConfirm(false);
     navigate('/');
+  };
+
+  /**
+   * Handles creating a new page from YAML configuration
+   */
+  const handleImportPage = () => {
+    try {
+      const config = parse(importJson);
+      importPage(config);
+      setIsDialogOpen(false);
+      setImportJson('');
+      setShowImportTab(false);
+      setError(null);
+    } catch (error) {
+      console.error('Invalid YAML configuration:', error);
+      setError(error instanceof Error ? error.message : 'Invalid YAML configuration');
+    }
   };
 
   return (
@@ -331,28 +357,77 @@ const Sidebar: React.FC = () => {
         </Tooltip>
       </Box>
 
-      <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
-        <DialogTitle>Create New Page</DialogTitle>
+      <Dialog
+        open={isDialogOpen}
+        onClose={() => {
+          setIsDialogOpen(false);
+          setShowImportTab(false);
+          setImportJson('');
+        }}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Add New Page</DialogTitle>
         <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Page Title"
-            fullWidth
-            value={newPageTitle}
-            onChange={(e) => setNewPageTitle(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && newPageTitle.trim()) {
-                e.preventDefault();
-                handleAddPage();
-              }
-            }}
-          />
+          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+            <Tabs
+              value={showImportTab ? 1 : 0}
+              onChange={(_, newValue) => setShowImportTab(newValue === 1)}
+              aria-label="add page tabs"
+            >
+              <Tab label="Create New" />
+              <Tab label="Import Configuration" />
+            </Tabs>
+          </Box>
+
+          {showImportTab ? (
+            <>
+              <Typography variant="body2" sx={{ mb: 2 }}>
+                Paste the page configuration YAML below:
+              </Typography>
+              <TextField
+                multiline
+                fullWidth
+                rows={15}
+                value={importJson}
+                onChange={(e) => setImportJson(e.target.value)}
+                placeholder="Paste configuration YAML here..."
+                error={importJson !== '' && !isValidYaml(importJson)}
+                helperText={importJson !== '' && !isValidYaml(importJson) ? 'Invalid YAML format' : ''}
+                sx={{
+                  '& .MuiInputBase-input': {
+                    fontFamily: 'monospace',
+                    fontSize: '0.875rem',
+                  }
+                }}
+              />
+            </>
+          ) : (
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Page Title"
+              fullWidth
+              value={newPageTitle}
+              onChange={(e) => setNewPageTitle(e.target.value)}
+            />
+          )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-          <Button onClick={handleAddPage} variant="contained">
-            Create
+          <Button onClick={() => {
+            setIsDialogOpen(false);
+            setShowImportTab(false);
+            setImportJson('');
+          }}>
+            Cancel
+          </Button>
+          <Button
+            onClick={showImportTab ? handleImportPage : handleAddPage}
+            variant="contained"
+            color="primary"
+            disabled={showImportTab ? !isValidYaml(importJson) : !newPageTitle.trim()}
+          >
+            {showImportTab ? 'Import' : 'Add'}
           </Button>
         </DialogActions>
       </Dialog>
@@ -369,8 +444,30 @@ const Sidebar: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Error Snackbar */}
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={() => setError(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setError(null)} severity="error" sx={{ width: '100%' }}>
+          {error}
+        </Alert>
+      </Snackbar>
     </Drawer>
   );
+};
+
+// Helper function to validate YAML
+const isValidYaml = (str: string): boolean => {
+  try {
+    parse(str);
+    return true;
+  } catch (e) {
+    return false;
+  }
 };
 
 export default Sidebar; 

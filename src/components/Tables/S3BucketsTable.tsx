@@ -601,7 +601,7 @@ const S3BucketsTable: React.FC<S3BucketsTableProps> = ({ widgetId }) => {
         }}
         pageSize={pageSize}
         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-        rowsPerPageOptions={[1, 2, 3, 5, 8, 13, 21]}
+        rowsPerPageOptions={[1, 2, 3, 5, 8, 13, 21, 34, 55]}
         disableSelectionOnClick
         autoHeight
         sx={{

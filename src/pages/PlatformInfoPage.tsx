@@ -9,6 +9,12 @@
  * 2. Custom hooks for layout persistence
  * 3. Reusable widget components
  * 4. Platform metrics visualization
+ * 5. Sticky header bar with consistent styling
+ * 
+ * Layout Structure:
+ * - Sticky header bar with page title
+ * - Main content area with grid layout
+ * - Resizable and draggable widgets
  */
 
 import React from 'react';
@@ -26,6 +32,7 @@ import 'react-resizable/css/styles.css';
  * Uses persistent layout storage to maintain user customizations.
  * 
  * Features:
+ * - Sticky header bar with consistent styling
  * - Draggable and resizable widgets
  * - Persistent layout across sessions
  * - Platform metrics display
@@ -44,31 +51,66 @@ const PlatformInfoPage: React.FC = () => {
   const { layout, onLayoutChange } = usePersistedLayout('platform-info-page', defaultLayout);
 
   return (
-    <Box sx={{ flexGrow: 1, p: 3 }}>
-      {/* Grid Layout Container */}
-      <GridLayout
-        className="layout"
-        layout={layout}
-        cols={20}
-        rowHeight={100}
-        width={2000}
-        isDraggable={true}
-        isResizable={true}
-        onLayoutChange={onLayoutChange}
-      >
-        {/* Platform Information Widget 1 */}
-        <div key="widget1">
-          <ResizableWidget title="Platform Info Widget 1">
-            <div>Platform Information Widget 1</div>
-          </ResizableWidget>
-        </div>
-        {/* Platform Information Widget 2 */}
-        <div key="widget2">
-          <ResizableWidget title="Platform Info Widget 2">
-            <div>Platform Information Widget 2</div>
-          </ResizableWidget>
-        </div>
-      </GridLayout>
+    <Box sx={{ flexGrow: 1 }}>
+      {/* Page Header Bar
+       * A sticky header bar that contains:
+       * - Page title
+       * Styled to match Material-UI AppBar height and appearance
+       */}
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        px: 3,
+        py: 1.5,
+        backgroundColor: 'action.hover',
+        borderBottom: 1,
+        borderColor: 'divider',
+        height: '64px', // Standard Material-UI AppBar height
+        position: 'sticky',
+        top: 0,
+        zIndex: 1
+      }}>
+        <Box 
+          component="h2" 
+          sx={{ 
+            fontSize: 'h6.fontSize',
+            fontWeight: 'h6.fontWeight'
+          }}
+        >
+          Platform Information
+        </Box>
+      </Box>
+
+      {/* Main Content Area
+       * Contains the grid layout for widgets with proper padding
+       */}
+      <Box sx={{ p: 3 }}>
+        {/* Grid Layout Container */}
+        <GridLayout
+          className="layout"
+          layout={layout}
+          cols={20}
+          rowHeight={100}
+          width={2000}
+          isDraggable={true}
+          isResizable={true}
+          onLayoutChange={onLayoutChange}
+        >
+          {/* Platform Information Widget 1 */}
+          <div key="widget1">
+            <ResizableWidget title="Platform Info Widget 1">
+              <div>Platform Information Widget 1</div>
+            </ResizableWidget>
+          </div>
+          {/* Platform Information Widget 2 */}
+          <div key="widget2">
+            <ResizableWidget title="Platform Info Widget 2">
+              <div>Platform Information Widget 2</div>
+            </ResizableWidget>
+          </div>
+        </GridLayout>
+      </Box>
     </Box>
   );
 };

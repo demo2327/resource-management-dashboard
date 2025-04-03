@@ -45,25 +45,60 @@ const RDSPage: React.FC = () => {
   const { layout, onLayoutChange } = usePersistedLayout('rds-page', defaultLayout);
 
   return (
-    <Box sx={{ flexGrow: 1, p: 3 }}>
-      {/* Grid Layout Container */}
-      <GridLayout
-        className="layout"
-        layout={layout}
-        cols={20}
-        rowHeight={100}
-        width={2000}
-        isDraggable={true}
-        isResizable={true}
-        onLayoutChange={onLayoutChange}
-      >
-        {/* RDS Clusters Inventory Widget */}
-        <div key="inventory">
-          <ResizableWidget title="RDS Clusters Inventory">
-            <div>RDS Clusters Inventory Content</div>
-          </ResizableWidget>
-        </div>
-      </GridLayout>
+    <Box sx={{ flexGrow: 1 }}>
+      {/* Page Header Bar
+       * A sticky header bar that contains:
+       * - Page title
+       * Styled to match Material-UI AppBar height and appearance
+       */}
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        px: 3,
+        py: 1.5,
+        backgroundColor: 'action.hover',
+        borderBottom: 1,
+        borderColor: 'divider',
+        height: '64px', // Standard Material-UI AppBar height
+        position: 'sticky',
+        top: 0,
+        zIndex: 1
+      }}>
+        <Box 
+          component="h2" 
+          sx={{ 
+            fontSize: 'h6.fontSize',
+            fontWeight: 'h6.fontWeight'
+          }}
+        >
+          RDS Databases
+        </Box>
+      </Box>
+
+      {/* Main Content Area
+       * Contains the grid layout for widgets with proper padding
+       */}
+      <Box sx={{ p: 3 }}>
+        {/* Grid Layout Container */}
+        <GridLayout
+          className="layout"
+          layout={layout}
+          cols={20}
+          rowHeight={100}
+          width={2000}
+          isDraggable={true}
+          isResizable={true}
+          onLayoutChange={onLayoutChange}
+        >
+          {/* RDS Clusters Inventory Widget */}
+          <div key="inventory">
+            <ResizableWidget title="RDS Clusters Inventory">
+              <div>RDS Clusters Inventory Content</div>
+            </ResizableWidget>
+          </div>
+        </GridLayout>
+      </Box>
     </Box>
   );
 };
