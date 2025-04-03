@@ -74,12 +74,32 @@ const WIDGET_TYPES = [
  * @property {string} title - Display title of the widget
  * @property {WidgetType} type - Type of widget (determines rendered content)
  * @property {boolean} [isHeart] - Optional flag for heart-shaped styling
+ * @property {number} x - Horizontal position in the grid
+ * @property {number} y - Vertical position in the grid
+ * @property {number} w - Width in grid units
+ * @property {number} h - Height in grid units
  */
 export interface Widget {
   id: string;
   title: string;
   type: WidgetType;
   isHeart?: boolean;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+/**
+ * CustomPage Interface
+ * 
+ * Defines the structure of a custom page object
+ */
+interface CustomPage {
+  id: string;
+  title: string;
+  widgets: Widget[];
+  layout: any[];
 }
 
 /**
@@ -105,7 +125,9 @@ const CustomPage: React.FC = () => {
     updatePageLayout, 
     copyWidget, 
     updatePageTitle,
-    updateWidgetTitle
+    updateWidgetTitle,
+    addPage,
+    importPage
   } = useCustomPages();
 
   // Local state for managing the UI
@@ -118,7 +140,7 @@ const CustomPage: React.FC = () => {
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
   const [importJson, setImportJson] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [importError, setImportError] = useState('');
 
   // Find the current page from the pages array
   const page = pages.find(p => p.id === id);
@@ -215,9 +237,22 @@ const CustomPage: React.FC = () => {
    * Generates a YAML configuration with comments explaining the structure
    */
   const generateYamlConfig = () => {
+    // Get all S3 table filters from localStorage
+    const s3Filters: Record<string, any> = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('s3-buckets-filters-')) {
+        const widgetId = key.replace('s3-buckets-filters-', '');
+        s3Filters[widgetId] = JSON.parse(localStorage.getItem(key) || '[]');
+      }
+    }
+
     const config = {
       title: page.title,
-      widgets: page.widgets,
+      widgets: page.widgets.map(widget => ({
+        ...widget,
+        filters: widget.type === 's3-buckets' ? s3Filters[widget.id] : undefined
+      })),
       layout: page.layout
     };
 
@@ -235,6 +270,7 @@ title: ${page.title}
 # - title: Display title of the widget
 # - type: Type of widget (text, inventory, pie-chart, or s3-buckets)
 # - isHeart: Optional flag for heart-shaped styling
+# - filters: For S3 bucket widgets, contains the filter configuration
 widgets:
 ${stringify(config.widgets, { indent: 2 })}
 
@@ -255,19 +291,54 @@ ${stringify(config.layout, { indent: 2 })}`;
    * Handles importing a page configuration
    * Validates and processes the YAML input
    */
-  const handleImport = () => {
+  const handleImport = (yamlString: string) => {
     try {
-      const config = parse(importJson);
-      // Validate required fields
-      if (!config.title || !Array.isArray(config.widgets) || !Array.isArray(config.layout)) {
-        throw new Error('Invalid page configuration: missing required fields');
+      const config = parse(yamlString);
+      
+      if (!config.title || !config.widgets || !config.layout) {
+        throw new Error('Invalid configuration format');
       }
+
+      const newPage: CustomPage = {
+        id: Math.random().toString(36).substr(2, 9),
+        title: config.title,
+        widgets: config.widgets.map((widget: any) => ({
+          id: Math.random().toString(36).substr(2, 9),
+          title: widget.title,
+          type: widget.type,
+          x: widget.x,
+          y: widget.y,
+          w: widget.w,
+          h: widget.h,
+          isHeart: widget.isHeart || false,
+        })),
+        layout: config.layout.map((item: any) => ({
+          ...item,
+          i: config.widgets.find((w: Widget) => w.x === item.x && w.y === item.y)?.id || item.i
+        }))
+      };
+
+      // Restore S3 table filters if they exist in the config
+      config.widgets.forEach((widget: any) => {
+        if (widget.type === 's3-buckets' && widget.filters) {
+          const newWidgetId = newPage.widgets.find(w => 
+            w.title === widget.title && 
+            w.type === widget.type && 
+            w.x === widget.x && 
+            w.y === widget.y
+          )?.id;
+          if (newWidgetId) {
+            localStorage.setItem(`s3-buckets-filters-${newWidgetId}`, JSON.stringify(widget.filters));
+          }
+        }
+      });
+
+      importPage(newPage);
       setIsImportDialogOpen(false);
       setImportJson('');
-      setError(null);
+      setImportError('');
     } catch (error) {
-      console.error('Invalid YAML configuration:', error);
-      setError(error instanceof Error ? error.message : 'Invalid YAML configuration');
+      setImportError('Invalid YAML format');
     }
   };
 
@@ -446,7 +517,7 @@ ${stringify(config.layout, { indent: 2 })}`;
         <DialogActions>
           <Button onClick={() => setIsImportDialogOpen(false)}>Cancel</Button>
           <Button 
-            onClick={handleImport} 
+            onClick={() => handleImport(importJson)} 
             variant="contained"
             disabled={!isValidYaml(importJson)}
           >
@@ -506,13 +577,13 @@ ${stringify(config.layout, { indent: 2 })}`;
 
       {/* Error Snackbar */}
       <Snackbar
-        open={!!error}
+        open={!!importError}
         autoHideDuration={6000}
-        onClose={() => setError(null)}
+        onClose={() => setImportError('')}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert onClose={() => setError(null)} severity="error" sx={{ width: '100%' }}>
-          {error}
+        <Alert onClose={() => setImportError('')} severity="error" sx={{ width: '100%' }}>
+          {importError}
         </Alert>
       </Snackbar>
     </Box>

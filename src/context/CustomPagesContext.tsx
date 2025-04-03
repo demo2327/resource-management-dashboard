@@ -140,15 +140,18 @@ export const CustomPagesProvider: React.FC<{ children: React.ReactNode }> = ({ c
           id: widgetId,
           type,
           title,
-          isHeart
-        };
-        // Calculate widget position based on existing layout
-        const newLayout: Layout = {
-          i: widgetId,
+          isHeart,
           x: (page.layout.length * 2) % 12, // Ensure widgets stay within 12-column grid
           y: Infinity, // Place at bottom
           w: 6, // Default width of 6 columns
           h: 4  // Default height of 4 rows
+        };
+        const newLayout: Layout = {
+          i: widgetId,
+          x: newWidget.x,
+          y: newWidget.y,
+          w: newWidget.w,
+          h: newWidget.h
         };
         return {
           ...page,
@@ -332,6 +335,16 @@ export const CustomPagesProvider: React.FC<{ children: React.ReactNode }> = ({ c
       widgets: newWidgets,
       layout: newLayout
     };
+
+    // Restore S3 table filters if they exist in the config
+    config.widgets.forEach((widget: any) => {
+      if (widget.type === 's3-buckets' && widget.filters) {
+        const newWidgetId = widgetIdMap.get(widget.id);
+        if (newWidgetId) {
+          localStorage.setItem(`s3-buckets-filters-${newWidgetId}`, JSON.stringify(widget.filters));
+        }
+      }
+    });
 
     setPages([...pages, newPage]);
   };
