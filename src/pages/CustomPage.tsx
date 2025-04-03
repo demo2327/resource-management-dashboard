@@ -10,6 +10,12 @@
  * 3. Custom context integration for state management
  * 4. TypeScript type definitions and interfaces
  * 5. Material-UI components and styling
+ * 
+ * Code Maintenance Guidelines:
+ * 1. Keep all comments up-to-date with code changes
+ * 2. Update component documentation when adding new features
+ * 3. Document any changes to the component's structure or behavior
+ * 4. Maintain consistent comment formatting and style
  */
 
 import React, { useState } from 'react';
@@ -190,9 +196,27 @@ const CustomPage: React.FC = () => {
   };
 
   return (
-    <Box sx={{ flexGrow: 1, p: 3 }}>
-      {/* Page Header with Title and Add Widget Button */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2, alignItems: 'center' }}>
+    <Box sx={{ flexGrow: 1 }}>
+      {/* Page Header Bar
+       * A sticky header bar that contains:
+       * - Editable page title
+       * - Add Widget button
+       * Styled to match Material-UI AppBar height and appearance
+       */}
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        px: 3,
+        py: 1.5,
+        backgroundColor: 'action.hover',
+        borderBottom: 1,
+        borderColor: 'divider',
+        height: '64px', // Standard Material-UI AppBar height
+        position: 'sticky',
+        top: 0,
+        zIndex: 1
+      }}>
         {isEditingTitle ? (
           <TextField
             value={editedTitle}
@@ -203,8 +227,8 @@ const CustomPage: React.FC = () => {
             size="small"
             sx={{ 
               '& .MuiInputBase-input': {
-                fontSize: 'h4.fontSize',
-                fontWeight: 'h4.fontWeight',
+                fontSize: 'h6.fontSize',
+                fontWeight: 'h6.fontWeight',
               }
             }}
           />
@@ -215,14 +239,16 @@ const CustomPage: React.FC = () => {
             sx={{ 
               cursor: 'pointer', 
               '&:hover': { 
-                backgroundColor: 'action.hover',
+                backgroundColor: 'action.selected',
                 borderRadius: 1,
                 px: 1,
                 mx: -1
               },
               display: 'inline-block',
               px: 1,
-              mx: -1
+              mx: -1,
+              fontSize: 'h6.fontSize',
+              fontWeight: 'h6.fontWeight'
             }}
           >
             {page.title}
@@ -232,37 +258,42 @@ const CustomPage: React.FC = () => {
           variant="contained"
           startIcon={<AddIcon />}
           onClick={() => setIsDialogOpen(true)}
+          size="small"
         >
           Add Widget
         </Button>
       </Box>
 
-      {/* Grid Layout for Widgets */}
-      <GridLayout
-        className="layout"
-        layout={page.layout}
-        cols={20}
-        rowHeight={100}
-        width={2000}
-        isDraggable={true}
-        isResizable={true}
-        onLayoutChange={handleLayoutChange}
-      >
-        {page.widgets.map((widget) => (
-          <div key={widget.id}>
-            <ResizableWidget 
-              title={widget.title}
-              showControls={true}
-              onCopy={() => copyWidget(page.id, widget.id)}
-              onDelete={() => removeWidgetFromPage(page.id, widget.id)}
-              onTitleChange={(newTitle) => updateWidgetTitle(page.id, widget.id, newTitle)}
-              isHeart={widget.isHeart}
-            >
-              {renderWidget(widget)}
-            </ResizableWidget>
-          </div>
-        ))}
-      </GridLayout>
+      {/* Main Content Area
+       * Contains the grid layout for widgets with proper padding
+       */}
+      <Box sx={{ p: 3 }}>
+        <GridLayout
+          className="layout"
+          layout={page.layout}
+          cols={20}
+          rowHeight={100}
+          width={2000}
+          isDraggable={true}
+          isResizable={true}
+          onLayoutChange={handleLayoutChange}
+        >
+          {page.widgets.map((widget) => (
+            <div key={widget.id}>
+              <ResizableWidget 
+                title={widget.title}
+                showControls={true}
+                onCopy={() => copyWidget(page.id, widget.id)}
+                onDelete={() => removeWidgetFromPage(page.id, widget.id)}
+                onTitleChange={(newTitle) => updateWidgetTitle(page.id, widget.id, newTitle)}
+                isHeart={widget.isHeart}
+              >
+                {renderWidget(widget)}
+              </ResizableWidget>
+            </div>
+          ))}
+        </GridLayout>
+      </Box>
 
       {/* Add Widget Dialog */}
       <Dialog 
