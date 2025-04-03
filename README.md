@@ -10,6 +10,7 @@ A React-based web application for managing and monitoring various resources, wit
 - Persistent widget layouts
 - AWS resource inventory management
 - Modular page structure
+- Custom dashboard pages with sharing and importing capabilities
 
 ## Pages
 
@@ -22,6 +23,70 @@ A React-based web application for managing and monitoring various resources, wit
   - S3 Buckets
   - VPCs
   - ECS
+- Custom Pages (User-defined dashboards)
+
+## Using Custom Pages
+
+Custom Pages allow you to create personalized dashboards with a variety of widgets. Here's how to use them:
+
+### Creating a Custom Page
+
+1. Click on "Custom Pages" in the sidebar
+2. Click "Add New Page"
+3. Enter a title for your page
+4. Click "Add" to create the page
+
+### Adding Widgets
+
+1. Navigate to your custom page
+2. Click the "Add Widget" button in the header
+3. Enter a title for the widget
+4. Select the widget type:
+   - Text Widget: For displaying text content
+   - Inventory Widget: For showing inventory data
+   - Pie Chart: For visualizing data in a pie chart
+   - S3 Buckets: For displaying S3 bucket information
+5. Optionally enable "Heart Shape" styling
+6. Click "Add" to create the widget
+
+### Customizing Your Page
+
+- Drag widgets to reposition them
+- Resize widgets by dragging their edges
+- Edit widget titles by clicking on them
+- Copy widgets using the copy button
+- Delete widgets using the delete button
+- Edit the page title by clicking on it
+
+### Sharing Page Configurations
+
+You can share your custom page layouts with others:
+
+1. Click the "Share" button in the page header
+2. A dialog will open showing the page configuration in YAML format
+3. Copy the YAML configuration
+4. Share it with others
+
+### Importing Page Configurations
+
+To recreate a shared page layout:
+
+1. Click "Custom Pages" in the sidebar
+2. Click "Add New Page"
+3. Select the "Import Configuration" tab
+4. Paste the YAML configuration
+5. Click "Import" to create the page
+
+The imported page will maintain the same layout and widget configuration as the original, with new unique IDs generated for the widgets.
+
+### Resetting Custom Pages
+
+To reset all custom pages and start fresh:
+
+1. Click the "Reset All" button at the bottom of the sidebar
+2. Confirm the action in the dialog
+
+Note: This action cannot be undone and will remove all custom pages and their configurations.
 
 ## Technology Stack
 

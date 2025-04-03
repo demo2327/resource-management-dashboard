@@ -49,6 +49,7 @@ interface CustomPagesContextType {
   resetAllPages: () => void;
   updatePageTitle: (pageId: string, newTitle: string) => void;
   updateWidgetTitle: (pageId: string, widgetId: string, newTitle: string) => void;
+  importPage: (config: CustomPage) => void;
 }
 
 // Create context with default values
@@ -63,6 +64,7 @@ const CustomPagesContext = createContext<CustomPagesContextType>({
   resetAllPages: () => {},
   updatePageTitle: () => {},
   updateWidgetTitle: () => {},
+  importPage: () => {},
 });
 
 /**
@@ -299,6 +301,41 @@ export const CustomPagesProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }));
   };
 
+  /**
+   * Imports a page from a configuration object
+   * @param {CustomPage} config - The page configuration to import
+   */
+  const importPage = (config: CustomPage) => {
+    // Validate required fields
+    if (!config.title || !Array.isArray(config.widgets) || !Array.isArray(config.layout)) {
+      throw new Error('Invalid page configuration');
+    }
+
+    // Generate new IDs for widgets to avoid conflicts
+    const widgetIdMap = new Map<string, string>();
+    const newWidgets = config.widgets.map(widget => {
+      const newId = Math.random().toString(36).substr(2, 9);
+      widgetIdMap.set(widget.id, newId);
+      return { ...widget, id: newId };
+    });
+
+    // Update layout with new widget IDs
+    const newLayout = config.layout.map(item => ({
+      ...item,
+      i: widgetIdMap.get(item.i) || item.i
+    }));
+
+    // Create new page with imported configuration
+    const newPage: CustomPage = {
+      id: Math.random().toString(36).substr(2, 9),
+      title: config.title,
+      widgets: newWidgets,
+      layout: newLayout
+    };
+
+    setPages([...pages, newPage]);
+  };
+
   return (
     <CustomPagesContext.Provider
       value={{
@@ -311,7 +348,8 @@ export const CustomPagesProvider: React.FC<{ children: React.ReactNode }> = ({ c
         copyWidget,
         resetAllPages,
         updatePageTitle,
-        updateWidgetTitle
+        updateWidgetTitle,
+        importPage
       }}
     >
       {children}
